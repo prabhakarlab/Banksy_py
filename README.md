@@ -68,7 +68,7 @@ This software requires the following packages and has been tested on the followi
 
 3. Generate **neighbour expression matrix** (*n<sub>cells</sub>* by *n<sub>genes</sub>*) using spatial graph to average over spatial neighbours. The neighbour matrix can be computed simply by sparse matrix multiplication of the spatial graph's adjacency matrix with the gene-cell matrix.
 
-4. Scale original expression matrix by *√(1 - λ)* and neighbour expression matrix by *√(λ)* and concatenate matrices to obtain **neighbour-augmented expression matrix** (*n<sub>cells</sub>* by *2n<sub>genes</sub>*) using `banksy.main.weighted_concatenate` with ```neighbourhood_contribution``` = λ. These operations are performed on the numerical data `adata.X`; use `banksy.main.bansky_matrix_to_adata` to recover Anndata object with the appropriate annotations.
+4. Scale original expression matrix by *√(1 - λ)* and neighbour expression matrices by *√(λ)* and concatenate matrices to obtain **neighbour-augmented expression matrix** (*n<sub>cells</sub>* by *(2+m)n<sub>genes</sub>*) using `banksy.main.weighted_concatenate`. These operations are performed on the numerical data `adata.X`; use `banksy.main.bansky_matrix_to_adata` to recover Anndata object with the appropriate annotations.
 
 
 <img src="./data/accessories/readme_pic2.png" alt="drawing" width="600"/>
