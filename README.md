@@ -59,7 +59,7 @@ This software requires the following packages and has been tested on the followi
 
 2. Generate a **spatial graph** which defines spatial neighbour relationships using `banksy.main.generate_spatial_weights_fixed_nbrs`. This outputs a sparse adjacency matrix defining the graph. Visualize these with `utils.plotting.plot_graph_weights`.
    
-   - `decay types`: `uniform` weights all neighbours equally, `reciprocal` weights neighbours by 1/r where r is the distance from neighbouring cell to the index cell. `ranked` ranks neighbouring cells by distance with farther cells having higher rank, then sets Gaussian decay by rank. Sum of neighbour weights are always normalized to 1 for each cell.
+   - `decay types`: default is `scaled_gaussian`: gaussian decay with width equal to the median distance of neighbouring cells to index cell (see methods section of manuscript for more details). Other options: `uniform` weights all neighbours equally, `reciprocal` weights neighbours by 1/r where r is the distance from neighbouring cell to the index cell. `ranked` ranks neighbouring cells by distance with farther cells having higher rank, then sets Gaussian decay by rank. Sum of neighbour weights are always normalized to 1 for each cell.
    - `generate_spatial_weights_fixed_radius` (not used in paper) generates a spatial graph where each cell is connected to all cells within a given radius. This leads to variable numbers of neighbours per cell.
 
 
