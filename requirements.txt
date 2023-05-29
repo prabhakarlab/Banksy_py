@@ -1,0 +1,10 @@
+scanpy==1.8.1 
+anndata==0.7.6 
+umap==0.5.1 
+numpy==1.20.1 
+scipy==1.6.2 
+pandas==1.2.4 
+scikit-learn==0.24.1 
+statsmodels==0.12.2 
+python-igraph==0.9.1 
+pynndescent==0.5.4
