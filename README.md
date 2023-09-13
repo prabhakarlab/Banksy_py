@@ -1,4 +1,4 @@
-# BANKSY
+# BANKSY (Biorxiv)
 
 ## Neighbourhood Informed Clustering for Cell Type and Tissue Domain Annotation
 
@@ -6,7 +6,10 @@
 
 ## Overview
 
-BANKSY is a method for clustering spatial transcriptomic data by augmenting the transcriptomic profile of each cell with an average of the transcriptomes of its spatial neighbors. By incorporating neighborhood information for clustering, BANKSY is able to:
+BANKSY is a method for clustering spatial transcriptomic data by augmenting the transcriptomic profile of each cell with an average of the transcriptomes of its spatial neighbors. 
+Preprint is available [here](https://www.biorxiv.org/content/10.1101/2022.04.14.488259v1).
+
+By incorporating neighborhood information for clustering, BANKSY is able to:
 
 1. **improve cell-type assignment** in noisy data
 
