@@ -4,6 +4,7 @@ Main BANKSY functions
 Nigel 3 dec 2020
 
 updated 4 mar 2022
+updated 8 Sep 2022
 """
 
 import numpy as np
@@ -12,7 +13,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from typing import Union, Tuple
+from typing import Union, Tuple, List
 
 import scipy.sparse as sparse
 from scipy.sparse import csr_matrix, issparse
@@ -21,7 +22,7 @@ from sklearn.neighbors import NearestNeighbors
 import anndata
 
 import igraph
-#print(f"Using igraph version {igraph.__version__}")
+# print(f"Using igraph version {igraph.__version__}")
 import leidenalg
 # print(f"Using leidenalg version {leidenalg.__version__}\n")
 
@@ -29,14 +30,12 @@ from utils.time_utils import timer
 from banksy.csr_operations import remove_greater_than, row_normalize, filter_by_rank_and_threshold
 from banksy.labels import Label
 
-
 def gaussian_weight_1d(distance: float, sigma: float):
     """
     Calculate normalized gaussian value for a given distance from central point
     Normalized by root(2*pi) x sigma
     """
     return np.exp(-0.5 * distance ** 2 / sigma ** 2) / (sigma * np.sqrt(2 * np.pi))
-
 
 def gaussian_weight_2d(distance: float, sigma: float):
     """
@@ -46,7 +45,6 @@ def gaussian_weight_2d(distance: float, sigma: float):
     sigma_squared = float(sigma) ** 2
     return np.exp(-0.5 * distance ** 2 / sigma_squared) / (sigma_squared * 2 * np.pi)
 
-
 def plot_1d_gaussian(sigma: float, min_val: float, max_val: float, interval: float):
     """
     plot a 1d gaussian distribution, check if area sums to 1
@@ -55,7 +53,6 @@ def plot_1d_gaussian(sigma: float, min_val: float, max_val: float, interval: flo
     y = gaussian_weight_1d(x, sigma)
     print(f"checking area : {np.sum(y * interval)} (should sum to 1)")
     plt.plot(x, y)
-
 
 def p_equiv_radius(p: float, sigma: float):
     """
@@ -112,14 +109,45 @@ def generate_spatial_distance_graph(locations: np.ndarray,
 
         return graph_out
 
+@timer
+def theta_from_spatial_graph(locations: np.ndarray,
+                             spatial_graph: csr_matrix,
+                             ):
+    """
+    get azimuthal angles from spatial graph and coordinates
+    (assumed dim 1: x, dim 2: y, dim 3: z...)
+
+    returns CSR matrix with theta (azimuthal angles) as .data
+    """
+
+    theta_data = np.zeros_like(spatial_graph.data, dtype=np.float32)
+
+    for n in range(spatial_graph.indptr.shape[0] - 1):
+        ptr_start, ptr_end = spatial_graph.indptr[n], spatial_graph.indptr[n + 1]
+        nbr_indices = spatial_graph.indices[ptr_start:ptr_end]
+
+        self_coord = locations[[n], :]
+        nbr_coord = locations[nbr_indices, :]
+        relative_coord = nbr_coord - self_coord
+
+        theta_data[ptr_start:ptr_end] = np.arctan2(
+            relative_coord[:, 1], relative_coord[:, 0])
+
+    theta_graph = spatial_graph.copy()
+    theta_graph.data = theta_data
+
+    return theta_graph
+
 
 @timer
 def generate_spatial_weights_fixed_nbrs(locations: np.ndarray,
+                                        m: int = 0,  # azimuthal transform order
                                         num_neighbours: int = 10,
                                         decay_type: str = "reciprocal",
                                         nbr_object: NearestNeighbors = None,
                                         verbose: bool = True,
-                                        ) -> Tuple[csr_matrix, csr_matrix]:
+                                        max_radius: int = None,
+                                        ) -> Tuple[csr_matrix, csr_matrix, Union[csr_matrix, None]]:
     """
     generate a graph (csr format) where edge weights decay with distance
     """
@@ -127,14 +155,19 @@ def generate_spatial_weights_fixed_nbrs(locations: np.ndarray,
     distance_graph = generate_spatial_distance_graph(
         locations,
         nbr_object=nbr_object,
-        num_neighbours=num_neighbours,
-        radius=None,
+        num_neighbours=num_neighbours * (m + 1),
+        radius=max_radius,
     )
+
+    if m > 0:
+        theta_graph = theta_from_spatial_graph(locations, distance_graph)
+    else:
+        theta_graph = None
 
     graph_out = distance_graph.copy()
 
-    # convert distances to weights
-    # ----------------------------
+    # compute weights from nbr distances (r)
+    # --------------------------------------
 
     if decay_type == "uniform":
 
@@ -143,6 +176,25 @@ def generate_spatial_weights_fixed_nbrs(locations: np.ndarray,
     elif decay_type == "reciprocal":
 
         graph_out.data = 1 / graph_out.data
+
+    elif decay_type == "reciprocal_squared":
+
+        graph_out.data = 1 / (graph_out.data ** 2)
+
+    elif decay_type == "scaled_gaussian":
+
+        indptr, data = graph_out.indptr, graph_out.data
+
+        for n in range(len(indptr) - 1):
+
+            start_ptr, end_ptr = indptr[n], indptr[n + 1]
+            if end_ptr >= start_ptr:
+                # row entries correspond to a cell's neighbours
+                nbrs = data[start_ptr:end_ptr]
+                median_r = np.median(nbrs)
+                #### Changed here
+                weights = np.exp(-(nbrs / median_r) ** 2)
+                data[start_ptr:end_ptr] = weights
 
     elif decay_type == "ranked":
 
@@ -169,10 +221,18 @@ def generate_spatial_weights_fixed_nbrs(locations: np.ndarray,
     else:
         raise ValueError(
             f"Weights decay type <{decay_type}> not recognised.\n"
-            f"Should be 'uniform', 'reciprocal' or 'ranked'."
+            f"Should be 'uniform', 'reciprocal', 'reciprocal_squared', "
+            f"'scaled_gaussian' or 'ranked'."
         )
 
-    return row_normalize(graph_out, verbose=verbose), distance_graph
+    # make nbr weights sum to 1
+    graph_out = row_normalize(graph_out, verbose=verbose)
+
+    # multiply by Azimuthal Fourier Transform
+    if m > 0:
+        graph_out.data = graph_out.data * np.exp(1j * m * theta_graph.data)
+
+    return graph_out, distance_graph, theta_graph
 
 
 @timer
@@ -194,7 +254,8 @@ def generate_spatial_weights_fixed_radius(locations: np.ndarray,
             print(f"Equivalent radius for removing {p} of "
                   f"gaussian distribution with sigma {sigma} is: {r}\n")
     else:
-        raise ValueError(f"decay_type {decay_type} incorrect or not implemented")
+        raise ValueError(
+            f"decay_type {decay_type} incorrect or not implemented")
 
     distance_graph = generate_spatial_distance_graph(locations,
                                                      nbr_object=nbr_object,
@@ -207,7 +268,8 @@ def generate_spatial_weights_fixed_radius(locations: np.ndarray,
     if decay_type == "gaussian":
         graph_out.data = gaussian_weight_2d(graph_out.data, sigma)
     else:
-        raise ValueError(f"decay_type {decay_type} incorrect or not implemented")
+        raise ValueError(
+            f"decay_type {decay_type} incorrect or not implemented")
 
     return row_normalize(graph_out, verbose=verbose), distance_graph
 
@@ -216,7 +278,6 @@ def generate_spatial_weights_fixed_radius(locations: np.ndarray,
 # Combining self / neighbours
 # ===========================
 #
-
 def zscore(matrix: Union[np.ndarray, csr_matrix],
            axis: int = 0,
            ) -> np.ndarray:
@@ -231,7 +292,6 @@ def zscore(matrix: Union[np.ndarray, csr_matrix],
         squared = matrix.copy()
         squared.data **= 2
         E_x2 = squared.mean(axis=axis)
-        del squared
 
     else:
 
@@ -249,6 +309,69 @@ def zscore(matrix: Union[np.ndarray, csr_matrix],
     zscored_matrix = np.nan_to_num(zscored_matrix)
 
     return zscored_matrix
+
+def concatenate_all(matrix_list: List[Union[np.ndarray, csr_matrix]],
+                    neighbourhood_contribution: float,
+                    adata: anndata.AnnData = None,
+                    ) -> np.ndarray:
+    """
+    Concatenate self- with neighbour- feature matrices
+    converts all matrices are dense
+    z-scores each matrix and applies relevant neighbour contributions (lambda)
+    each higher k is given half the weighting of the previous one.
+    """
+
+    num_k = len(matrix_list) - 1
+
+    scale_factors_squared = np.zeros(len(matrix_list))
+
+    scale_factors_squared[0] = 1 - neighbourhood_contribution
+
+    denom = 0
+    for k in range(num_k):
+        denom += 1 / (2 ** (k + 1))
+
+    for k in range(num_k):
+        scale_factors_squared[k + 1] = 1 / (2 ** (k + 1)) / denom * neighbourhood_contribution
+
+    scale_factors = np.sqrt(scale_factors_squared)
+
+    print(f"Scale factors squared: {scale_factors_squared}\nScale factors: {scale_factors}")
+
+    scaled_list = []
+    for n in range(len(matrix_list)):
+        mat = matrix_list[n]
+        if issparse(mat):
+            mat = mat.todense()
+        if np.iscomplexobj(mat):
+            mat = np.absolute(mat)
+        scaled_list.append(scale_factors[n] * zscore(mat, axis=0))
+
+    concatenated_matrix = np.concatenate(scaled_list, axis=1)
+
+    if isinstance(adata, anndata.AnnData):
+
+        var_original = adata.var.copy()
+        var_original["is_nbr"] = False
+        var_original["k"] = -1  # k not applicable
+
+        var_list = [var_original, ]
+        for k in range(num_k):
+            var_nbrs = adata.var.copy()
+            var_nbrs["is_nbr"] = True
+            var_nbrs["k"] = k
+            var_nbrs.index += f"_nbr_{k}"
+            var_list.append(var_nbrs)
+
+        var_combined = pd.concat(var_list)
+
+        return anndata.AnnData(concatenated_matrix, obs=adata.obs, var=var_combined)
+
+    elif adata is None:
+        return concatenated_matrix
+
+    else:
+        print("Adata type not recognised. Should be AnnData or None.")
 
 
 @timer
@@ -286,10 +409,10 @@ def banksy_matrix_to_adata(banksy_matrix,
      - duplicating the original var (per-gene) annotations and adding "_nbr"
      - keeping the obs (per-cell) annotations the same as original anndata that banksy matrix was computed from
     """
-    
+
     var_nbrs = adata.var.copy()
     var_nbrs.index += "_nbr"
-    nbr_bool = np.zeros((var_nbrs.shape[0]*2,), dtype=bool)
+    nbr_bool = np.zeros((var_nbrs.shape[0] * 2,), dtype=bool)
     nbr_bool[var_nbrs.shape[0]:] = True
     print("num_nbrs:", sum(nbr_bool))
 
@@ -385,7 +508,8 @@ class LeidenPartition(object):
                 )
                 self._print_csr_info(self.snn_weighted,
                                      "shared NN with distance-based weights")
-                print(f"shared NN weighted graph data: {self.snn_weighted.data}")
+                print(
+                    f"shared NN weighted graph data: {self.snn_weighted.data}")
                 self.G = self.csr_to_igraph(self.snn_weighted, )
 
             else:
@@ -446,6 +570,7 @@ class LeidenPartition(object):
         return nbrs, nn_graph
 
     @timer
+
     def shared_nn(self,
                   nn_connectivity: csr_matrix,
                   filter: bool = True,
@@ -499,6 +624,7 @@ class LeidenPartition(object):
         return snn_connections, snn_graph
 
     @timer
+
     def csr_to_igraph(self,
                       csr_mat: csr_matrix,
                       ) -> igraph.Graph:
@@ -515,6 +641,7 @@ class LeidenPartition(object):
                             edge_attrs={"weight": csr_mat.data.tolist()})
 
     @timer
+
     def partition(self,
                   resolution: float = 0.7,
                   partition_metric=leidenalg.RBConfigurationVertexPartition,
@@ -541,4 +668,13 @@ class LeidenPartition(object):
 
         return label, partition.modularity
 
-
+@timer
+def median_dist_to_nearest_neighbour(adata: anndata.AnnData,
+                                     key: str = "coord_xy"):
+    
+    '''Finds and returns median cell distance in a graph'''
+    nbrs = NearestNeighbors(algorithm='ball_tree').fit(adata.obsm[key])
+    distances, indices = nbrs.kneighbors(n_neighbors=1)
+    median_cell_distance = np.median(distances)
+    print(f"\nMedian distance to closest cell = {median_cell_distance}\n")
+    return nbrs
