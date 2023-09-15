@@ -23,7 +23,7 @@ The R version of BANKSY is available here (https://github.com/prabhakarlab/Banks
 
 ### System requirements: <a name="sysreqs"></a>
 
-Machine with 16 GB of RAM. `BANKSY` is extremely scalable and fast even on CPU for large datasets. 
+Machine with at least 16 GB of RAM. `BANKSY` is extremely scalable and fast even on CPU for large datasets. 
 
 ### Software requirements: <a name="softreqs"></a>
 
