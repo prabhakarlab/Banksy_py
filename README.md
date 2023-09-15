@@ -19,8 +19,6 @@ BANKSY is applicable to a wide variety of spatial technologies (e.g. 10x Visium,
 This Python version of BANKSY (compatible with `Scanpy`), we show how BANKSY can be used for task **1** (improving cell-type assignment) using Slide-seq and Slide-seq V2 mouse cerebellum datasets. 
 The R version of BANKSY is available here (https://github.com/prabhakarlab/Banksy).
 
-An older version of the code used to reproduce the results in the mansucript is available on the `Banksy_manuscript` branch.
-
 ## <b> Prerequisites <a name="prereqs"></a>  </b>
 
 ### System requirements: <a name="sysreqs"></a>
