@@ -1,4 +1,4 @@
-# <b> BANKSY: A neighbourhood-informed clustering algorithm for cell type identification and domain segmentation  </b>
+# <b> BANKSY:  Spatial Clustering Algorithm that Unifies Cell-Typing and Tissue Domain Segmentation  </b>
 
 ### *Vipul Singhal\*, Nigel Chou\*, Joseph Lee, Yue Yi Fei, Jinyue Liu, Wan Kee Chock, Li Lin, YunChing Chang, Erica Teo, Hwee Kuan Lee, Kok Hao Chen<sup>#</sup> and Shyam Prabhakar<sup>#</sup>* <br>
 
