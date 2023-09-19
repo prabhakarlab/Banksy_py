@@ -226,7 +226,8 @@ def plot_std_per_gene(st_dev_pergene, lambda_param, **kwargs):
 
 def convert2dense(X):
     '''Auxiliary function to convert sparse matrix to dense'''
-
+    if isinstance(X, np.ndarray):
+        return X
     if issparse(X) or isinstance(X, anndata._core.views.ArrayView):
         X = X.toarray()
     else:
