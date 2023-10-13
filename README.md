@@ -58,7 +58,8 @@ This software requires the following packages and has been tested on the followi
 3.	Use `conda install -c conda-forge scanpy python-igraph leidenalg` as described in the [scanpy documentation](https://scanpy.readthedocs.io/en/stable/installation.html). This will install scanpy as well as other neccesary dependencies. (Alternatively, users can install scanpy using pip via `pip install scanpy`).
 4.	Clone this github repository using `git clone https://github.com/prabhakarlab/Banksy_py`
 5. To run the ipython notebooks, install jupyter using `conda install -c conda-forge jupyter`.
-5.	Try out BANKSY by running the examples in the provide ipython notebooks: [`slideseqv1_analysis.ipynb`](./slideseqv1_analysis.ipynb) and/or [`slideseqv2_analysis.ipynb`](./slideseqv2_analysis.ipynb). More details and description of different steps in the process are provided within the notebooks.
+6. Ensure that your current working directory corresponds to where the Github repository was cloned. Use `cd <dir path>/Banksy_py` to change your working directory. 
+7.	Try out BANKSY by running the examples in the provide ipython notebooks: [`slideseqv1_analysis.ipynb`](./slideseqv1_analysis.ipynb) and/or [`slideseqv2_analysis.ipynb`](./slideseqv2_analysis.ipynb). More details and description of different steps in the process are provided within the notebooks.
 
 ### Quick installation via `environment.yml` file (via Anaconda) <a name="install"></a>
 
