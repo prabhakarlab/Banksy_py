@@ -64,8 +64,9 @@ This software requires the following packages and has been tested on the followi
 ### Quick installation via `environment.yml` file (via Anaconda) <a name="install"></a>
 
 1. We recommend users to clone this repository `git clone https://github.com/prabhakarlab/Banksy_py`
-2. Activate conda via `conda activate`
+2. Change current working directory if neccessary, as in point 6 above (`cd <dir path>/Banksy_py`).
 3. Create a new environment for BANKSY from the [.yml](./environment.yml): `conda env create --name banksy --file=environment.yml`
+4. Activate conda via `conda activate banksy`
 
 ### Quick installation (via pip) <a name="install"></a>
 
