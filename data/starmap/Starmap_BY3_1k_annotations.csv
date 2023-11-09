@@ -1,4 +1,4 @@
-,orig_ident,reads_per_cell,genes_per_cell,cluster_id,cluster_name,group,x,y,manual_domains
+,orig_ident,reads_per_cell,genes_per_cell,cluster_id,cluster_name,group,x,y,smoothed_manual
 8,0,310,172,1,eL6-2,0,4980.777664,49.77124718,L6
 9,0,533,277,5,eL4,0,8729.177425,53.47311392,L4
 12,0,452,237,11,eL2/3,0,11547.56636,46.31549263,L2/3
