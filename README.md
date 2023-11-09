@@ -80,7 +80,7 @@ Users can directly install the prequisite packages (which replicates our Anacond
 
 ### Installation using `pip` from `requirements.txt` file <a name="install"></a>
 
-Users who have `python>=3.8` and `pip` can also install our environment from `requirements.txt` here after cloning in this repository:
+Users who have `python=3.8-3.11` and `pip` can also install our environment from `requirements.txt` here after cloning in this repository:
 
       $ git clone https://github.com/prabhakarlab/Banksy_py.git
       $ cd Banksy_py
