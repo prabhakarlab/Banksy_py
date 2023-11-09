@@ -71,7 +71,7 @@ adata = adata[adata.obs["cluster_name"].notnull()]
 
 annotations =  pd.read_csv(os.path.join(file_path, "Starmap_BY3_1k_meta_annotated_18oct22.csv"))
 
-manual_labels =  "smoothed_manual" # Ground truth annotations in pd.DataFrame
+manual_labels =  "manual_domains" # Ground truth annotations in pd.DataFrame
 annotation_key = 'manual_annotations' # Key to access annotations in adata.obs[annotation_keys]
 
 print(annotations.loc[:,manual_labels ])
