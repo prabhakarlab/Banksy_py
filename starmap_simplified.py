@@ -8,7 +8,7 @@ import numpy as np
 
 from banksy.initialize_banksy import initialize_banksy
 from banksy.run_banksy import run_banksy_multiparam
-from utils.color_lists import spagcn_color
+from banksy_utils.color_lists import spagcn_color
 
 start = time.perf_counter_ns()
 random_seed = 1234
@@ -21,7 +21,7 @@ np.random.seed(random_seed)
 # 2. Saving output images and '.csv' files in 'output_folder'
 
 # %%
-from utils.load_data import load_adata
+from banksy_utils.load_data import load_adata
 '''Main tunable variation in running the banksy algorithm'''
 
 '''Input File'''
@@ -144,7 +144,7 @@ results_df = run_banksy_multiparam(
 # ## Optional Step: Refine Clusters 
 # We can smooth labels based on the majority of its neighbourhood. 
 # Note that this is not used in our main manuscript
-from utils.refine_clusters import refine_clusters
+from banksy_utils.refine_clusters import refine_clusters
 
 results_df = refine_clusters(adata,
                     results_df,

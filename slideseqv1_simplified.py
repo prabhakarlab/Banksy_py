@@ -2,7 +2,7 @@
 import os, time
 import numpy as np
 import warnings
-from utils.color_lists import spagcn_color
+from banksy_utils.color_lists import spagcn_color
 
 warnings.filterwarnings("ignore")
 
@@ -30,7 +30,7 @@ locations_filename = "Cerebellum_BeadLocationsForR.csv"
 adata_filename = "slideseqv1_cerebellum_adataraw.h5ad"
 
 # %%
-from utils.load_data import load_adata
+from banksy_utils.load_data import load_adata
 
 # To either load data from .h5ad directly or convert raw data to .h5ad format
 load_adata_directly = True
@@ -56,7 +56,7 @@ sc.pp.calculate_qc_metrics(adata,
                            inplace=True)
 
 # %%
-from utils.filter_utils import filter_cells
+from banksy_utils.filter_utils import filter_cells
 
 # Filter cells with each respective filters
 adata = filter_cells(adata,
@@ -66,7 +66,7 @@ adata = filter_cells(adata,
                      gene_filter=10)
 
 # %%
-from utils.filter_utils import normalize_total, filter_hvg
+from banksy_utils.filter_utils import normalize_total, filter_hvg
 
 # Normalizes the anndata dataset
 adata = normalize_total(adata)

@@ -26,7 +26,7 @@ locations_filename = "Cerebellum_BeadLocationsForR.csv"
 adata_filename = "slideseqv1_cerebellum_adataraw.h5ad"
 
 # %%
-from utils.load_data import load_adata
+from banksy_utils.load_data import load_adata
 
 # To either load data from .h5ad directly or convert raw data to .h5ad format
 load_adata_directly = True
@@ -53,7 +53,7 @@ sc.pp.calculate_qc_metrics(adata,
 
 
 # %%
-from utils.filter_utils import filter_cells
+from banksy_utils.filter_utils import filter_cells
 
 # Filter cells with each respective filters
 adata = filter_cells(adata, 
@@ -63,7 +63,7 @@ adata = filter_cells(adata,
              gene_filter=10)
 
 # %%
-from utils.filter_utils import normalize_total, filter_hvg
+from banksy_utils.filter_utils import normalize_total, filter_hvg
 
 # Normalizes the anndata dataset
 adata = normalize_total(adata)
@@ -118,7 +118,7 @@ banksy_dict["nonspatial"] = {
 
 print(banksy_dict['nonspatial'][0.0]['adata'])
 
-from utils.umap_pca import pca_umap
+from banksy_utils.umap_pca import pca_umap
 
 pca_umap(banksy_dict,
          pca_dims = pca_dims,

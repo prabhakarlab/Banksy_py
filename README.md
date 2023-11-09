@@ -51,30 +51,40 @@ This software requires the following packages and has been tested on the followi
 
 ## <b> Getting Started <a name="getstart"></a> </b>
 
-### Installation in new Anaconda environment (recommended) <a name="install"></a>
+### Installation via Anaconda (recommended) <a name="install"></a>
 
-1. We recommend users to download and install [Anaconda](https://www.anaconda.com/distribution/#download-section).
-2.	Create a new conda environment; see [managing conda environments](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html). 
-3.	Use `conda install -c conda-forge scanpy python-igraph leidenalg` as described in the [scanpy documentation](https://scanpy.readthedocs.io/en/stable/installation.html). This will install scanpy as well as other neccesary dependencies. (Alternatively, users can install scanpy using pip via `pip install scanpy`).
-4.	Clone this github repository using `git clone https://github.com/prabhakarlab/Banksy_py`
-5. To run the ipython notebooks, install jupyter using `conda install -c conda-forge jupyter`.
-6. Ensure that your current working directory corresponds to where the Github repository was cloned. Use `cd <dir path>/Banksy_py` to change your working directory. 
-7.	Try out BANKSY by running the examples in the provide ipython notebooks: [`slideseqv1_analysis.ipynb`](./slideseqv1_analysis.ipynb) and/or [`slideseqv2_analysis.ipynb`](./slideseqv2_analysis.ipynb). More details and description of different steps in the process are provided within the notebooks.
+To use ``Banksy_py``, we recommend setting up a ``conda`` environment and installing the prequisite packages, then cloning this repository.
 
-### Quick installation via `environment.yml` file (via Anaconda) <a name="install"></a>
+      (base) $ conda create --name banksy
+      (base) $ conda activate banksy
+      (banksy) $ conda install -c conda-forge scanpy python-igraph leidenalg
+      (banksy) $ git clone https://github.com/prabhakarlab/Banksy_py.git
+      (banksy) $ cd Banksy_py
 
-1. We recommend users to clone this repository `git clone https://github.com/prabhakarlab/Banksy_py`
-2. Change current working directory if neccessary, as in point 6 above (`cd <dir path>/Banksy_py`).
-3. Create a new environment for BANKSY from the [.yml](./environment.yml): `conda env create --name banksy --file=environment.yml`
-4. Activate conda via `conda activate banksy`
+To run the examples presented in `juypter` notebooks, install the extensions for `juypter`.
 
-### Quick installation (via pip) <a name="install"></a>
+      (banksy) $ conda install -c conda-forge jupyter
 
-1. We recommend users to clone this repository `git clone https://github.com/prabhakarlab/Banksy_py`
-2. Install the prequisite packages for BANKSY from the [requirements](./requirements.txt): `pip install -r requirements.txt`
-   
+Try out `BANKSY` by running the examples in the provide ipython notebooks: [`slideseqv1_analysis.ipynb`](./slideseqv1_analysis.ipynb) and/or [`slideseqv2_analysis.ipynb`](./slideseqv2_analysis.ipynb). More details on running `BANKSY` are provided within the notebooks.
 
- To run the `slideseq_v2` dataset, please to download the data from the [original source](https://singlecell.broadinstitute.org/single_cell/study/SCP948) and save it in the `data/slide_seq/v2` folder.
+To run the `slideseq_v2` dataset, please to download the data from the [original source](https://singlecell.broadinstitute.org/single_cell/study/SCP948) and save it in the `data/slide_seq/v2` folder.
+
+### Installation from `environment.yml` file <a name="install"></a>
+
+Users can directly install the prequisite packages (which replicates our Anaconda environment) from `environment.yml` here after cloning in this repository:
+
+      (base) $ git clone https://github.com/prabhakarlab/Banksy_py.git
+      (base) $ cd Banksy_py
+      (base) $ conda env create --name banksy --file=environment.yml
+      (base) $ conda activate banksy
+
+### Installation using `pip` from `requirements.txt` file <a name="install"></a>
+
+Users who have `python>=3.8` and `pip` can also install our environment from `requirements.txt` here after cloning in this repository:
+
+      $ git clone https://github.com/prabhakarlab/Banksy_py.git
+      $ cd Banksy_py
+      $ pip install -r requirements.txt
 
 ### Installation via PyPI (Coming Soon) <a name="install"></a>
 
@@ -100,7 +110,7 @@ For example, to access the BANKSY matrix generated using
 
 1. Preprocess gene-cell matrix (as above). z-score by gene using `banksy.main.zscore` or `scanpy.pp.scale`.  Functions provided in the `Scanpy` package handle most of these steps. Parameters and filtering criterion may vary by spatial technology and dataset source.
 
-2. **Constructing the spatial graph** which defines spatial neighbour relationships using `banksy.main.generate_spatial_weights_fixed_nbrs`. This outputs a sparse adjacency matrix defining the graph. Visualize these with `utils.plotting.plot_graph_weights`. <br> Some parameters that affect this step are:
+2. **Constructing the spatial graph** which defines spatial neighbour relationships using `banksy.main.generate_spatial_weights_fixed_nbrs`. This outputs a sparse adjacency matrix defining the graph. Visualize these with `banksy_utils.plotting.plot_graph_weights`. <br> Some parameters that affect this step are:
 
    - The spatial graph can be generated via the $k_{geom}$ parameter, which connects a cell to its $k_{geom}$ nearest neighbours. This spatial graph is the basis in which the neighbourhood matrix $M$ and the azimuthal gabor filter (AGF) matrix $G$ is constructed. 
    
@@ -125,7 +135,7 @@ For example, to access the BANKSY matrix generated using
     
 6. **Clustering cells** by finding neighbours in expression space and **cluster** using graph-based clustering. Here we find expression-neighbours and perform Leiden clustering following the implemenation in Giotto.
 
-7. **Refinement (Optional)** In the prescene of `noisy` clusters, we offer an optional refinement step via `utils.refine_clusters` to smooth labels in the clusters exclusively for domain segmentation tasks. However, we do not recommend the use of excessive refinement as it wears out fine-grained domains. 
+7. **Refinement (Optional)** In the prescene of `noisy` clusters, we offer an optional refinement step via `banksy_utils.refine_clusters` to smooth labels in the clusters exclusively for domain segmentation tasks. However, we do not recommend the use of excessive refinement as it wears out fine-grained domains. 
 
 ### <b> Other useful tools in package </b>
 
