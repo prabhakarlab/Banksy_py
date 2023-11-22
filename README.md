@@ -1,4 +1,4 @@
-# BANKSY (Biorxiv)
+# BANKSY (Biorxiv, version 1.0.0)
 
 ## Neighbourhood Informed Clustering for Cell Type and Tissue Domain Annotation
 
