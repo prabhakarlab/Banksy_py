@@ -1,4 +1,4 @@
-# <b> BANKSY </b>
+# <b> BANKSY </b> (version 1.1.0)
 
 ## <b> Neighbourhood Informed Clustering for Cell Type and Tissue Domain Annotation </b>
 
