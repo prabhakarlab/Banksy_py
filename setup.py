@@ -33,5 +33,5 @@ setup(
         'urllib3<4.0',
         'websocket-client<3.0',
     ],
-    python_requires='>=3.6',
+    python_requires='>=3.8',
 )
