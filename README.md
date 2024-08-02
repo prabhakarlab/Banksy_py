@@ -179,9 +179,9 @@ Refer to `requirements.txt` for the supported versions of different packages
 If you want to use or cite BANKSY, please refer to the following paper:
 
 ```
-BANKSY: A Spatial Clustering Algorithm that Unifes Cell Typing and Tissue Domain Segmentation, (submitted).  
+BANKSY unifies cell typing and tissue domain segmentation for scalable spatial omics data analysis 
 ```
-Article preprint can be accessed at the [bioRxiv repository](https://www.biorxiv.org/content/10.1101/2022.04.14.488259v1)
+which can be accessed here: [https://www.nature.com/articles/s41588-024-01664-3]
 
 ### <b> License </b>
 This project is licensed under The GPLV3 license. See the [LICENSE.md](./LICENSE.md) file for details.
