@@ -9,8 +9,7 @@ setup(
     mantainer='albert.plaplanas@sanofi.com',
     mantainer_email='albert.plaplanas@sanofi.com',
     packages=[
-        'banksy_py.banksy',
-        "banksy_py.banksy_utils",
+        'banksy_py',
     ],
     install_requires=[
         'anndata>=0.10.2',
