@@ -13,7 +13,8 @@ import scanpy as sc
 from typing import Union, List, Tuple
 import numpy as np
 import pandas as pd
-from banksy_utils.plotting import plot_2d_embeddings, plot_labels_seperately
+from banksy_py.banksy_utils.plotting import plot_2d_embeddings, plot_labels_seperately
+# from banksy_utils.plotting import plot_2d_embeddings, plot_labels_seperately
 from banksy.labels import plot_connections, Label
 import anndata
 

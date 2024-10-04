@@ -8,8 +8,8 @@ import numpy as np
 from scipy.sparse import csr_matrix
 
 from typing import Union
-
-from banksy_utils.time_utils import timer
+from banksy_py.banksy_utils.time_utils import timer
+# from .banksy_utils.time_utils import timer
 
 
 @timer

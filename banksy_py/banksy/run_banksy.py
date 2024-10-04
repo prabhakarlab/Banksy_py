@@ -9,7 +9,8 @@ from banksy.embed_banksy import generate_banksy_matrix
 from banksy.labels import Label
 from banksy.main import concatenate_all
 from banksy.cluster_methods import run_Leiden_partition, run_mclust_partition
-from banksy_utils.umap_pca import pca_umap
+from banksy_py.banksy_utils.umap_pca import pca_umap
+# from banksy_utils.umap_pca import pca_umap
 
 
 def run_banksy_multiparam(adata: anndata.AnnData,

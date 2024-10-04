@@ -25,8 +25,8 @@ import igraph
 # print(f"Using igraph version {igraph.__version__}")
 import leidenalg
 # print(f"Using leidenalg version {leidenalg.__version__}\n")
-
-from banksy_utils.time_utils import timer
+from banksy_py.banksy_utils.time_utils import timer
+# from banksy_utils.time_utils import timer
 from banksy.csr_operations import remove_greater_than, row_normalize, filter_by_rank_and_threshold
 from banksy.labels import Label
 
