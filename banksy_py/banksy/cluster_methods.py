@@ -1,8 +1,8 @@
 import re, gc, time
 import pandas as pd
 from IPython.display import display
-from banksy.main import LeidenPartition
-from banksy.labels import Label, match_label_series
+from banksy_py.banksy.main import LeidenPartition
+from banksy_py.banksy.labels import Label, match_label_series
 import anndata
 import leidenalg
 from sklearn.metrics.cluster import adjusted_rand_score

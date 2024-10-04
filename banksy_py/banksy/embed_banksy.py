@@ -14,7 +14,7 @@ from scipy.sparse import csr_matrix, issparse
 import anndata
 from copy import deepcopy
 from datetime import datetime
-from banksy.main import concatenate_all
+from banksy_py.banksy.main import concatenate_all
 from sklearn.decomposition import PCA
 from typing import Tuple
 

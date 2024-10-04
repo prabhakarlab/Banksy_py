@@ -15,10 +15,9 @@ from matplotlib.lines import Line2D
 import seaborn as sns
 from anndata import AnnData
 import anndata
-from banksy_utils.plotting import plot_edge_histogram, plot_graph_weights
-from banksy_utils.cluster_utils import pad_clusters, get_DEgenes, get_metagene_difference
-
-from banksy_utils.slideseq_ref_data import dropviz_dict, markergenes_dict
+from banksy_py.banksy_utils.plotting import plot_edge_histogram, plot_graph_weights
+from banksy_py.banksy_utils.cluster_utils import pad_clusters, get_DEgenes, get_metagene_difference
+from banksy_py.banksy_utils.slideseq_ref_data import dropviz_dict, markergenes_dict
 
 import scanpy as sc
 

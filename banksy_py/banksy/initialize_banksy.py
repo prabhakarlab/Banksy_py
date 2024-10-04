@@ -11,8 +11,7 @@ from typing import Tuple
 
 import anndata
 from banksy_py.banksy_utils.plot_utils import plot_edge_histograms, plot_weights, plot_theta_graph
-# from banksy_.banksy_utils.plot_utils import plot_edge_histograms, plot_weights, plot_theta_graph
-from banksy.main import generate_spatial_weights_fixed_nbrs, median_dist_to_nearest_neighbour
+from banksy_py.banksy.main import generate_spatial_weights_fixed_nbrs, median_dist_to_nearest_neighbour
 
 
 def initialize_banksy(adata: anndata.AnnData,

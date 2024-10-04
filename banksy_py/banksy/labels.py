@@ -16,8 +16,8 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.ticker import StrMethodFormatter
 from matplotlib.collections import PolyCollection
 from banksy_py.banksy_utils.time_utils import timer
-from banksy_utils.time_utils import timer
-from banksy.csr_operations import row_normalize
+from banksy_py.banksy_utils.time_utils import timer
+from banksy_py.banksy.csr_operations import row_normalize
 
 
 class Label(object):

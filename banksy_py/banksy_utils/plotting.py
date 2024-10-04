@@ -23,7 +23,7 @@ from scipy.sparse import csr_matrix
 import warnings
 
 from .time_utils import timer
-from banksy.labels import Label
+from banksy_py.banksy.labels import Label
 
 
 @timer
