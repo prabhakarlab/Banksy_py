@@ -8,7 +8,7 @@ import umap
 import anndata
 import scipy.sparse as sparse
 from scipy.sparse import csr_matrix, issparse
-from banksy_utils.pca import plot_remaining_variance
+from .pca import plot_remaining_variance
 from typing import List
 import numpy as np
 

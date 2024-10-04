@@ -10,7 +10,7 @@ Nigel 4 mar 2021
 import numpy as np
 from sklearn.decomposition import PCA
 
-from banksy_utils.time_utils import timer
+from .time_utils import timer
 
 from typing import Tuple, List, Union
 

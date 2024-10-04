@@ -7,7 +7,7 @@ from sklearn.neighbors import NearestNeighbors
 import scipy.sparse as sp
 
 from banksy.labels import Label
-from banksy_utils.color_lists import spagcn_color
+from .color_lists import spagcn_color
 import matplotlib.ticker as ticker
 import matplotlib.pyplot as plt
 import copy

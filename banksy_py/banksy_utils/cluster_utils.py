@@ -1,7 +1,7 @@
 import os, gc
 import numpy as np
 import anndata
-from banksy_utils.slideseq_ref_data import markergenes_dict
+from .slideseq_ref_data import markergenes_dict
 import scanpy as sc
 import pandas as pd
 from sklearn.metrics.cluster import adjusted_rand_score

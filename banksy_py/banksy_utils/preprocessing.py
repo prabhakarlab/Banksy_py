@@ -30,7 +30,7 @@ def preprocess_data(adata: anndata.AnnData,
     adata.var_names_make_unique()
     adata.var["mt"] = adata.var_names.str.startswith("MT-")
     # Calulates QC metrics and put them in place to the adata object
-    sc.pp.calculate_qc_metrics(adata, qc_vars=["mt"], 
+    sc.pp.calculate_qc_metrics(adata, qc_vars=["mt"],
                                percent_top=percent_top, 
                                log1p=log1p, 
                                inplace=inplace)
