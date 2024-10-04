@@ -1,2 +1,2 @@
-from banksy import *
-from banksy_utils import *
+from .banksy import *
+from .banksy_utils import *
