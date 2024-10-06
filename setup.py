@@ -12,7 +12,7 @@ setup(
         'banksy_py',
     ],
     install_requires=[
-        'anndata>=0.10.2',
+        'anndata>=0.10.8',
         'anyio>=4.0.0',
         'certifi',
         'h5py>=3.10.0',
