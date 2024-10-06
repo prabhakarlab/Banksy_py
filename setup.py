@@ -34,6 +34,9 @@ setup(
         'umap-learn>=0.5.4',
         'urllib3<4.0',
         'websocket-client<3.0',
+	'leidenalg>=0.10.2',
+	'IPython',
+	'rpy2'
     ],
     python_requires='>=3.6',
 )
