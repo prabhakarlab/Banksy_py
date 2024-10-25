@@ -1,0 +1,5 @@
+Link to CODEX dataset:
+
+- Dataset is publically available here [CODEX dataset](https://datadryad.org/stash/dataset/doi:10.5061/dryad.pk0p2ngrf). 
+- Download the file `GSM7423_09_CODEX_HuBMAP_alldata_Dryad_merged.csv` (a healthy colon HC sample).
+- Arrange it under `data/CODEX/23_09_CODEX_HuBMAP_alldata_Dryad_merged`
