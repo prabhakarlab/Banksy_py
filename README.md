@@ -1,4 +1,4 @@
-# <b> BANKSY:  Spatial Clustering Algorithm that Unifies Cell-Typing and Tissue Domain Segmentation  </b>
+# <b> BANKSY:  Spatial Clustering Algorithm that Unifies Cell-Typing and Tissue Domain Segmentation (v1.2.1) </b>
 
 ### *Vipul Singhal\*, Nigel Chou\*, Joseph Lee, Yifei Yue, Jinyue Liu, Wan Kee Chock, Li Lin, YunChing Chang, Erica Teo, Hwee Kuan Lee, Kok Hao Chen<sup>#</sup> and Shyam Prabhakar<sup>#</sup>* <br>
 
@@ -18,6 +18,9 @@ BANKSY is applicable to a wide variety of spatial technologies (e.g. 10x Visium,
 
 This Python version of BANKSY (compatible with `Scanpy`), we show how BANKSY can be used for task **1** (improving cell-type assignment) using Slide-seq and Slide-seq V2 mouse cerebellum datasets. 
 The R version of BANKSY is available here (https://github.com/prabhakarlab/Banksy).
+
+Changes for v1.2.1:
+- AGF has been corrected to align with R version. Normalization is with mean neighbour expression rather than mean of the modulated expression ($e^{\phi}$)
 
 ## <b> Prerequisites <a name="prereqs"></a>  </b>
 
