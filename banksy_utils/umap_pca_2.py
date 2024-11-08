@@ -15,7 +15,7 @@ import anndata
 import scipy.sparse as sparse
 from scipy.sparse import csr_matrix, issparse
 from banksy_utils.pca import plot_remaining_variance
-from typing import List
+from typing import List, Union
 import numpy as np
 
 def pca_umap(banksy_dict: dict,
@@ -93,7 +93,10 @@ def pca_umap_adata(adata: anndata.AnnData,
 
     # Reduce dimensions by PCA and then UMAP
     # --------------------------------------
-        
+                     
+    if isinstance(pca_dims, int):
+        pca_dims = [pca_dims,]
+      
     for pca_dim in pca_dims:
 
         if isinstance(pca_dim, int):
