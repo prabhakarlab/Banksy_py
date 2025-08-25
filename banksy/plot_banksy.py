@@ -89,8 +89,8 @@ def plot_results(
 
         if options['save_all_h5ad']:
             # If we want to save the anndata object as .h5ad format
-            save_path = os.path.join(save_path, f"{dataset_name}_{params_name}.h5ad")
-            adata_temp.write(save_path)
+            h5ad_save_path = os.path.join(save_path, f"{dataset_name}_{params_name}.h5ad")
+            adata_temp.write(h5ad_save_path)
 
         adata_temp.obsm[coord_keys[2]] = np.vstack(
             (adata_temp.obs[coord_keys[0]].values,
