@@ -1,0 +1,7 @@
+[project]
+name = "banksy"
+version = "1.1.1"
+authors = [
+]
+description = "BANKSY: Spatial Clustering Algorithm that Unifies Cell-Typing and Tissue Domain Segmentation"
+readme = "README.md"
