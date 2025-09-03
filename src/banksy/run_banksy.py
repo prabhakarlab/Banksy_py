@@ -1,5 +1,6 @@
 import gc
 import os
+import pandas as pd
 from typing import List, Union, Tuple
 
 import anndata
@@ -115,6 +116,11 @@ def run_banksy_multiparam(adata: anndata.AnnData,
         fig = plt.figure(figsize=(8, 8), constrained_layout=True)
         ax = fig.gca()
         title = f'λ = {round(lambda_p, 2)}' + ari_label
+
+        raw_clusters_df = pd.DataFrame(raw_clusters, index=adata_temp.obs_names)
+        raw_clusters_df.to_csv(
+            os.path.join(filepath, f'{params_name}.csv')
+        )
 
         print(f'Anndata {adata_temp.obsm}')
         subplot_sc(ax,
