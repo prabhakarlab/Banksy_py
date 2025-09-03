@@ -118,9 +118,19 @@ def run_banksy_multiparam(adata: anndata.AnnData,
         title = f'λ = {round(lambda_p, 2)}' + ari_label
 
         raw_clusters_df = pd.DataFrame(raw_clusters, index=adata_temp.obs_names)
-        raw_clusters_df.to_csv(
-            os.path.join(filepath, f'{params_name}.csv')
-        )
+        raw_clusters_df_filename = os.path.join(filepath, f'{params_name}_raw_clusters.csv')
+        if not os.path.exists(raw_clusters_df_filename):
+            raw_clusters_df.to_csv(
+                raw_clusters_df_filename
+            )
+        
+        embedding_name = [i for i in adata_temp.obsm.keys() if 'reduced_pc_' in i][0]
+        embedding_df = pd.DataFrame(adata_temp.obsm[embedding_name], index=adata_temp.obs_names)
+        embedding_df_filename = os.path.join(filepath, f'{params_name}_embedding.csv')
+        if not os.path.exists(embedding_df_filename):
+            embedding_df.to_csv(
+                embedding_df_filename
+            )
 
         print(f'Anndata {adata_temp.obsm}')
         subplot_sc(ax,
