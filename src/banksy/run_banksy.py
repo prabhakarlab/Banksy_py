@@ -111,7 +111,10 @@ def run_banksy_multiparam(adata: anndata.AnnData,
         if isinstance(raw_labels, Label):
             raw_labels = raw_labels.dense
         for i in raw_labels:
-            raw_clusters.append(color_list[i])
+            # raw_clusters.append(color_list[i])
+            raw_clusters.append(
+                'cluster_' + str(i)
+            )
 
         fig = plt.figure(figsize=(8, 8), constrained_layout=True)
         ax = fig.gca()
