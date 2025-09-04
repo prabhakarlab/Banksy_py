@@ -136,16 +136,16 @@ def run_banksy_multiparam(adata: anndata.AnnData,
             )
 
         print(f'Anndata {adata_temp.obsm}')
-        subplot_sc(ax,
-                   adata_temp,
-                   key,
-                   raw_clusters,
-                   num_clusters,
-                   title)
+        # subplot_sc(ax,
+        #            adata_temp,
+        #            key,
+        #            raw_clusters,
+        #            num_clusters,
+        #            title)
 
-        if savefig:
-            save_name = os.path.join(filepath, f'{params_name}.png')
-            fig.savefig(save_name, format='png', dpi=108)
+        # if savefig:
+        #     save_name = os.path.join(filepath, f'{params_name}.png')
+        #     fig.savefig(save_name, format='png', dpi=108)
 
     return results_df
 
