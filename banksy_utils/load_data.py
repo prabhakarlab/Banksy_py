@@ -60,15 +60,15 @@ def load_adata(filepath: str,
 
             else:
                 print(f"No such files {adata_filename} in {filepath}, please check the directory path and file names")
-                print(f"Alternatively, try to convert raw files to anndata if by setting \'load_adata_directly = False\'")
+                print("Alternatively, try to convert raw files to anndata if by setting 'load_adata_directly = False'")
     else:
         # If 'load_data_directly is set to false, try to read raw text files and convert to anndata
         try:
             gcm_df = pd.read_csv(os.path.join(filepath, gcm_filename), index_col = 0)
             locations_df = pd.read_csv(os.path.join(filepath, locations_filename), index_col = 0)
-            print(f'GCM data successfully read as {gcm_df}\n Location data successfuly read as {locations_df}')
-        except:
-            Exception("Error occured when reading csv files, check the if files are permissible to read")
+            print(f'GCM data successfully read as {gcm_df}\n Location data successfully read as {locations_df}')
+        except Exception as e:
+            print(f"Error occurred when reading csv files, check file permissions. Exception: {e}")
 
         
         sparse_X = sparse.csc_matrix(gcm_df.values.T)
@@ -90,8 +90,8 @@ def load_adata(filepath: str,
         raw_y, raw_x = adata.obs[y_coord], adata.obs[x_coord]
         adata.obsm[xy_coord] = np.vstack((adata.obs[x_coord].values,adata.obs[y_coord].values)).T
         print('Concatenation success!')
-    except:
-        print(f"Error in concatenating the matrices under adata.obsm[{coord_keys[2]}]\n raw_x, raw_y will return None")
+    except Exception as e:
+        print(f"Error in concatenating the matrices under adata.obsm[{coord_keys[2]}]: {e}\n raw_x, raw_y will return None")
         raw_y, raw_x = None, None
 
     return raw_y, raw_x, adata

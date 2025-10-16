@@ -256,7 +256,7 @@ def _plot_labels(adata_temp: anndata.AnnData,
 
     ax_locs.set_aspect('equal', 'datalim')
     ax_locs.set_title(f'BANKSY Labels ({params_name})', fontsize=20, fontweight="bold", )
-    # ax_locs.set_ylim(ax_locs.get_ylim()[::-1])
+    ax_locs.set_ylim(ax_locs.get_ylim()[::-1])
 
     ax_cbar = fig.add_subplot(grid[:, 1])
     cbar = fig.colorbar(
