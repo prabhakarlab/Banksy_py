@@ -46,6 +46,14 @@ def load_adata(filepath: str,
             - gcm_filename (str): .csv file containing the genome information of the cells
             - locations_filename (str): .csv file containing the x-y coordinates of the cells
             - coord_keys: A tuple of keys to index the x,y coordinates of the anndata object
+                        coord_keys[0]: usually the key for the x coordinate in the locations data frame. eg: "xcoord"
+                                    The same key will be used to refer to the x coords in adata.obs
+                        coord_keys[1]: usually the key for the y coordinate in the locations data frame. eg: "ycoord"
+                                    The same key will be used to refer to the y coords in adata.obs
+                        coord_keys[2]: a string that will be used in adata.obsm to store the 
+                                    locations numpy array (where the first column is x coord, second y coord)
+                                    eg: "xy_coord"
+
 
         Returns: Loaded Annadata and the raw coordinates (raw_x, raw_y) as pd.Series'''
     if load_adata_directly:
@@ -57,7 +65,6 @@ def load_adata(filepath: str,
                 print("Attemping to read Annadata directly")
                 adata = anndata.read_h5ad(os.path.join(filepath, adata_filename))
                 print("Anndata file successfully loaded!")
-
             else:
                 print(f"No such files {adata_filename} in {filepath}, please check the directory path and file names")
                 print("Alternatively, try to convert raw files to anndata if by setting 'load_adata_directly = False'")
@@ -75,20 +82,22 @@ def load_adata(filepath: str,
         
         adata = AnnData(X = sparse_X, 
                         obs = locations_df, 
-                        var = pd.DataFrame(index = gcm_df.index))
+                        var = pd.DataFrame(index = gcm_df.index)) 
+        #!TODO (LATER) add documentation on how the user must specify the GCM / locations data. 
         
         adata.write(os.path.join(filepath, adata_filename))
 
         adata.obs[coord_keys[0]] = locations_df.loc[:, coord_keys[0]]
         adata.obs[coord_keys[1]] = locations_df.loc[:, coord_keys[1]]
         print("Anndata file successfully written!")
+        
     
-    ### Added keys,
     try:
         print(f'Attempting to concatenate spatial x-y under adata.obsm[{coord_keys[2]}]')
         x_coord, y_coord, xy_coord = coord_keys[0], coord_keys[1], coord_keys[2]
         raw_y, raw_x = adata.obs[y_coord], adata.obs[x_coord]
         adata.obsm[xy_coord] = np.vstack((adata.obs[x_coord].values,adata.obs[y_coord].values)).T
+        #!TODO add documentation
         print('Concatenation success!')
     except Exception as e:
         print(f"Error in concatenating the matrices under adata.obsm[{coord_keys[2]}]: {e}\n raw_x, raw_y will return None")

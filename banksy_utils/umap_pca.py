@@ -19,16 +19,17 @@ def pca_umap(banksy_dict: dict,
                   **kwargs) -> None:
     '''
     PCA_UMAP first applies dimensionality reduction via PCA,
-    then applies UMAP to cluster the groups
-
+    then applies UMAP to cluster the groups. It updates the BANKSY dictionary (banksy_dict) 
+    with the computed UMAP / PCA embeddings. 
+    
     Args:
         banksy_dict (dict): The processing dictionary containing info about the banksy matrices
     
     Optional Arg:
-        pca_dims (List of integers): A list of integers which the PCA will reduce to
+        pca_dims (List of integers): A list of integers which the PCA will reduce to. 
     
     Variable Args (kwargs):
-        figsize (tuple of integers): A tuple for adjusting figure size
+        figsize (tuple of integers): A tuple for adjusting figure size. 
 
     Returns: Plot of remaining variance 
     '''
@@ -43,6 +44,7 @@ def pca_umap(banksy_dict: dict,
             
             if isinstance(lambda_param, str):
                 continue # skip weights matrices
+                #!LATER when does this happen?
 
             print(
                 f"\nReducing dims of dataset in (Index = {nbr_weight_decay}, lambda = {lambda_param})\n"

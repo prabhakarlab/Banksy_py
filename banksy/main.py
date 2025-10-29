@@ -11,20 +11,15 @@ import numpy as np
 import pandas as pd
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-import seaborn as sns
-
 from typing import Union, Tuple, List
-
 import scipy.sparse as sparse
 from scipy.sparse import csr_matrix, issparse
 from sklearn.neighbors import NearestNeighbors
-
 import anndata
-
 import igraph
-# print(f"Using igraph version {igraph.__version__}")
+print(f"Using igraph version {igraph.__version__}")
 import leidenalg
-# print(f"Using leidenalg version {leidenalg.__version__}\n")
+print(f"Using leidenalg version {leidenalg.__version__}\n")
 
 from banksy_utils.time_utils import timer
 from banksy.csr_operations import remove_greater_than, row_normalize, filter_by_rank_and_threshold
@@ -62,16 +57,13 @@ def p_equiv_radius(p: float, sigma: float):
     assert p < 1.0, f"p was {p}, must be less than 1"
     return np.sqrt(-2 * sigma ** 2 * np.log(p))
 
-
-#
 # spatial graph generation
 # ========================
-#
 
 @timer
 def generate_spatial_distance_graph(locations: np.ndarray,
                                     nbr_object: NearestNeighbors = None,
-                                    num_neighbours: int = None,
+                                    k_geom: int = None,
                                     radius: Union[float, int] = None,
                                     ) -> csr_matrix:
     """
@@ -86,17 +78,17 @@ def generate_spatial_distance_graph(locations: np.ndarray,
     else:  # use provided sklearn NN object
         nbrs = nbr_object
 
-    if num_neighbours is None:
+    if k_geom is None:
         # no limit to number of neighbours
         return nbrs.radius_neighbors_graph(radius=radius,
                                            mode="distance")
 
     else:
-        assert isinstance(num_neighbours, int), (
-            f"number of neighbours {num_neighbours} is not an integer"
+        assert isinstance(k_geom, int), (
+            f"number of neighbours {k_geom} is not an integer"
         )
 
-        graph_out = nbrs.kneighbors_graph(n_neighbors=num_neighbours,
+        graph_out = nbrs.kneighbors_graph(n_neighbors=k_geom,
                                           mode="distance")
 
         if radius is not None:
@@ -142,12 +134,15 @@ def theta_from_spatial_graph(locations: np.ndarray,
 @timer
 def generate_spatial_weights_fixed_nbrs(locations: np.ndarray,
                                         m: int = 0,  # azimuthal transform order
-                                        num_neighbours: int = 10,
+                                        k_geom: int = 10,
                                         decay_type: str = "reciprocal",
                                         nbr_object: NearestNeighbors = None,
                                         verbose: bool = True,
                                         max_radius: int = None,
-                                        ) -> Tuple[csr_matrix, csr_matrix, Union[csr_matrix, None]]:
+                                        ) -> Tuple[csr_matrix, 
+                                                   csr_matrix, 
+                                                   Union[csr_matrix, 
+                                                         None]]:
     """
     generate a graph (csr format) where edge weights decay with distance
     """
@@ -155,7 +150,7 @@ def generate_spatial_weights_fixed_nbrs(locations: np.ndarray,
     distance_graph = generate_spatial_distance_graph(
         locations,
         nbr_object=nbr_object,
-        num_neighbours=num_neighbours * (m + 1),
+        k_geom=k_geom * (m + 1),
         radius=max_radius,
     )
 
@@ -164,8 +159,8 @@ def generate_spatial_weights_fixed_nbrs(locations: np.ndarray,
     else:
         theta_graph = None
 
-    graph_out = distance_graph.copy()
-
+    graph_out = distance_graph.copy() # .copy() for csr matrices is deep
+    
     # compute weights from nbr distances (r)
     # --------------------------------------
 
@@ -199,7 +194,7 @@ def generate_spatial_weights_fixed_nbrs(locations: np.ndarray,
     elif decay_type == "ranked":
 
         linear_weights = np.exp(
-            -1 * (np.arange(1, num_neighbours + 1) * 1.5 / num_neighbours) ** 2
+            -1 * (np.arange(1, k_geom + 1) * 1.5 / k_geom) ** 2
         )
 
         indptr, data = graph_out.indptr, graph_out.data
@@ -241,7 +236,7 @@ def generate_spatial_weights_fixed_radius(locations: np.ndarray,
                                           sigma: float = 100,
                                           decay_type: str = "gaussian",
                                           nbr_object: NearestNeighbors = None,
-                                          max_num_neighbours: int = None,
+                                          max_k_geom: int = None,
                                           verbose: bool = True,
                                           ) -> Tuple[csr_matrix, csr_matrix]:
     """
@@ -259,7 +254,7 @@ def generate_spatial_weights_fixed_radius(locations: np.ndarray,
 
     distance_graph = generate_spatial_distance_graph(locations,
                                                      nbr_object=nbr_object,
-                                                     num_neighbours=max_num_neighbours,
+                                                     k_geom=max_k_geom,
                                                      radius=r)
 
     graph_out = distance_graph.copy()
@@ -273,11 +268,9 @@ def generate_spatial_weights_fixed_radius(locations: np.ndarray,
 
     return row_normalize(graph_out, verbose=verbose), distance_graph
 
-
-#
 # Combining self / neighbours
 # ===========================
-#
+
 def zscore(matrix: Union[np.ndarray, csr_matrix],
            axis: int = 0,
            ) -> np.ndarray:
@@ -371,7 +364,7 @@ def concatenate_all(matrix_list: List[Union[np.ndarray, csr_matrix]],
         return concatenated_matrix
 
     else:
-        print("Adata type not recognised. Should be AnnData or None.")
+        print("adata type not recognized. Should be AnnData or None.")
 
 
 @timer
@@ -407,7 +400,8 @@ def banksy_matrix_to_adata(banksy_matrix,
     """
     convert a banksy matrix to adata object, by 
      - duplicating the original var (per-gene) annotations and adding "_nbr"
-     - keeping the obs (per-cell) annotations the same as original anndata that banksy matrix was computed from
+     - keeping the obs (per-cell) annotations the same as original anndata that 
+     banksy matrix was computed from
     """
 
     var_nbrs = adata.var.copy()
@@ -421,16 +415,14 @@ def banksy_matrix_to_adata(banksy_matrix,
 
     return anndata.AnnData(banksy_matrix, obs=adata.obs, var=var_combined)
 
-
-#
 # Leiden Clustering
 # ========================
-#
 
 class LeidenPartition(object):
     """
-    Do leiden partitioning on an input space (can be cell x gene or BANKSY)
-    should be reduced by PCA first before feeding into this function
+    Do leiden partitioning on an input space (can be a cell x gene matrix
+    or a BANKSY matrix). Either way, it should be reduced by PCA first 
+    before being fed into this function. 
     """
 
     def __init__(self,
@@ -514,9 +506,6 @@ class LeidenPartition(object):
 
             else:
                 self.snn_weighted = None
-                # self.snn_connections = self.snn_connections.multiply(
-                #     self.nn_connectivity
-                # )
                 self.G = self.csr_to_igraph(self.snn_connections, )
 
         else:
@@ -541,7 +530,6 @@ class LeidenPartition(object):
     def find_nn(self,
                 weighted: bool = True,
                 ) -> Tuple[csr_matrix, csr_matrix]:
-
         nbrs = NearestNeighbors(
             algorithm=self.nn_algorithm,
         ).fit(self.input_space)
@@ -584,8 +572,13 @@ class LeidenPartition(object):
         """
         # compute all shared nearest neighbours
         snn_graph = nn_connectivity @ nn_connectivity.T
-
-        if allow_only_nn:
+        # Note snn is computed as AxA^T
+        
+        
+        
+        if allow_only_nn: 
+            # !TODO document this, low priority. basically only keep the snns which are also actual nns. 
+            # csr_matrix.multiply(nn_connectivity) is elementise mult with nn_connectivity. 
             original_nnz = snn_graph.nnz
 
             snn_graph = snn_graph.multiply(nn_connectivity)

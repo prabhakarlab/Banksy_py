@@ -157,7 +157,7 @@ def filter_hvg(adata: anndata.AnnData,
     
     '''Creates a copy of the original annadata object
     Applies log-transformation, 
-    then filter by highly-varaiable genes
+    then filter by highly- variable genes
 
     Input: 
         anndata: The anndata object 

@@ -2,7 +2,7 @@
 initialize the graphs neccesary to run BANKSY for a given number of neighbours,
 and vidualize graphs/histograms for QC purposes.
 
-TODO: allow for parameter sweep across multiple num_neighbours settings
+TODO: allow for parameter sweep across multiple k_geom settings
 
 Yifei Aug 2023
 """
@@ -10,14 +10,14 @@ Yifei Aug 2023
 from typing import Tuple
 
 import anndata
-
+import numpy as np
 from banksy_utils.plot_utils import plot_edge_histograms, plot_weights, plot_theta_graph
-from banksy.main import generate_spatial_weights_fixed_nbrs, median_dist_to_nearest_neighbour
-
+from banksy.main import generate_spatial_weights_fixed_nbrs
+from sklearn.neighbors import NearestNeighbors
 
 def initialize_banksy(adata: anndata.AnnData,
                       coord_keys: Tuple[str],
-                      num_neighbours: int = 15,
+                      k_geom: int = 15,
                       nbr_weight_decay: str = 'scaled_gaussian',
                       max_m: int = 1,
                       plt_edge_hist: bool = True,
@@ -30,8 +30,8 @@ def initialize_banksy(adata: anndata.AnnData,
     Input Args:
         adata (AnnData): AnnData object containing the data matrix
 
-        num_neighbours or k_geom (int) : The number of neighbours in which the edges,
-        weights and theta graph are constructed
+        k_geom (int) : The number of neighbours in which the edges,
+        weights and theta graph are constructed. 
 
         nbr_weight_decay (str): Type of neighbourhood decay function, can be 'scaled_gaussian' or 'reciprocal'
 
@@ -52,15 +52,20 @@ def initialize_banksy(adata: anndata.AnnData,
 
     weights_graphs = {}  # Sub-dictionary containing weighted graph
 
-    # Find median distance to closest neighbours
-    nbrs = median_dist_to_nearest_neighbour(adata, key=coord_keys[2])
+    # Find nearest nearest neighbours object. 
+    nbrs = NearestNeighbors(algorithm='ball_tree').fit(adata.obsm[coord_keys[2]])
+    
+    # Optional: print median distance for diagnostics
 
+    distances, _ = nbrs.kneighbors(n_neighbors=1)
+    print(f"\nMedian distance to closest cell = {np.median(distances):.4f}\n")
+    
     for m in range(max_m + 1):
 
         weights_graph, distance_graph, theta_graph = generate_spatial_weights_fixed_nbrs(
             adata.obsm[coord_keys[2]],
             m=m,
-            num_neighbours=num_neighbours,
+            k_geom=k_geom,
             decay_type=nbr_weight_decay,
             nbr_object=nbrs,
             verbose=False,
