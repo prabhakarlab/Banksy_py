@@ -1,0 +1,32 @@
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# macOS files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Data files (large datasets)
+*.h5ad
+*.csv
+data/slide_seq/v2/*.csv
+data/slide_seq/v2/*.h5ad
+
+# Temporary/output directories
+tmp_png/
+**/tmp_png/
+
+# Test notebooks (if you don't want to commit them)
+tests.ipynb
+test.ipynb
+
+# IDE settings (optional)
+.vscode/
+.idea/

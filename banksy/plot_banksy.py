@@ -38,10 +38,11 @@ def plot_results(
         color_list: List[str] = [],
         dataset_name: str = "slideseq_mousecerebellum",
         main_figsize: Tuple[float, float] = (15, 9),
+        flip_yaxis: bool = False,
         **kwargs
 ) -> None:
     '''
-    Plot and visualize the results of BankSY 
+    Plot and visualize the results of BANKSY 
 
     Args:
         results_df (pd.DataFrame): DataFrame containing all the results
@@ -102,7 +103,7 @@ def plot_results(
 
         fig, grid = _initialize_main_figure(main_figsize=main_figsize)
 
-        # Auxiliary funtion to plot labels
+        # Auxiliary function to plot labels
         _plot_labels(adata_temp,
                      key=coord_keys[2],
                      labels=labels,
@@ -111,7 +112,8 @@ def plot_results(
                      max_num_labels=max_num_labels,
                      params_name=params_name,
                      fig=fig,
-                     grid=grid)
+                     grid=grid, 
+                     flip_yaxis=flip_yaxis)
 
         if save_fig:
             if not os.path.exists(save_path):
@@ -132,7 +134,7 @@ def plot_results(
             plots_per_row=3,
             spot_size=1,
             subplot_size=(5, 5),
-            flip_axes=False,
+            flip_axes=flip_yaxis,
             verbose=False,
             save_fig=save_seperate_fig,
             save_path=os.path.join(save_path, f'{dataset_name}_{params_name}_clusters_seperate.png'),
@@ -234,7 +236,8 @@ def _plot_labels(adata_temp: anndata.AnnData,
                  max_num_labels: int,
                  params_name: str,
                  fig: plt.Figure,
-                 grid: plt.grid):
+                 grid: plt.grid, 
+                 flip_yaxis: bool = False):
     '''
     Plots the spatial map of cluster labels (each with different colour) in the main figure
     '''
@@ -256,7 +259,8 @@ def _plot_labels(adata_temp: anndata.AnnData,
 
     ax_locs.set_aspect('equal', 'datalim')
     ax_locs.set_title(f'BANKSY Labels ({params_name})', fontsize=20, fontweight="bold", )
-    # ax_locs.set_ylim(ax_locs.get_ylim()[::-1])
+    if flip_yaxis:  # 0 on top, typical of image data
+        ax_locs.set_ylim(ax_locs.get_ylim()[::-1])
 
     ax_cbar = fig.add_subplot(grid[:, 1])
     cbar = fig.colorbar(

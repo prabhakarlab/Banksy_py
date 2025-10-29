@@ -33,6 +33,7 @@ def plot_qc_hist(
         total_counts_cutoff: int,
         n_genes_high_cutoff: int,
         n_genes_low_cutoff: int,
+        figsize=(15,4),
         **kwargs):
     '''
     Plots a 1-by-4 figure of histograms for
@@ -40,12 +41,14 @@ def plot_qc_hist(
 
     Args:
         Anndata: AnnData Object containing 'total_counts' and 'n_genes_by_counts' 
-        total_counts_cutoff: Lower threshold for total counts, if 
-        n_genes_high_thrsehold: Upper threshold of gene count
+        total_counts_cutoff: Upper threshold for total counts
+        n_genes_high_cutoff: Upper threshold of gene count 
+        n_genes_low_cutoff: Lower threshold of gene count 
 
     Optional Args:
         figsize; default = (15,4): size of the figures
-        bins1-4; default = 'auto': the number of bins for plotting the histograms (e.g., bin1=80 sets the 80 bins for the first histogram)
+        bins1-4; default = 'auto': the number of bins for plotting the histograms 
+            (e.g., bin1=80 sets the 80 bins for the first histogram)
     '''
     # Edit bin_size_for_plts as a option, remove bins1,2
     options = {'figsize': (15, 4),
@@ -54,21 +57,32 @@ def plot_qc_hist(
     options.update(kwargs)
     bin_sizes = options['bin_options']
 
-    fig, axs = plt.subplots(1, 4, figsize=(15, 4))
+    fig, axs = plt.subplots(1, 4, figsize=figsize) 
 
-    sns.histplot(adata.obs["total_counts"], kde=False, bins=bin_sizes[0], ax=axs[0]).set(
+    sns.histplot(adata.obs["total_counts"], 
+                 kde=False, 
+                 bins=bin_sizes[0], 
+                 ax=axs[0]).set(
         title='Total Counts (unbounded)')
 
     sns.histplot(adata.obs["total_counts"][adata.obs["total_counts"] < total_counts_cutoff],
-                 kde=False, bins=bin_sizes[1], ax=axs[1]).set(title=f'Total Counts (bounded)')
+                 kde=False, 
+                 bins=bin_sizes[1], 
+                 ax=axs[1]).set(title=f'Total Counts (bounded)')
 
-    sns.histplot(adata.obs["n_genes_by_counts"], kde=False, bins=bin_sizes[2], ax=axs[2]).set(
+    sns.histplot(adata.obs["n_genes_by_counts"], 
+                 kde=False, 
+                 bins=bin_sizes[2], 
+                 ax=axs[2]).set(
         title='n-genes by counts (unbounded)')
 
     sns.histplot(adata.obs["n_genes_by_counts"][
                      (adata.obs["n_genes_by_counts"] < n_genes_high_cutoff) & (
                              adata.obs["n_genes_by_counts"] > n_genes_low_cutoff)
-                     ], kde=False, bins=bin_sizes[3], ax=axs[3]).set(title='n-genes by counts (bounded)')
+                     ], 
+                 kde=False, 
+                 bins=bin_sizes[3], 
+                 ax=axs[3]).set(title='n-genes by counts (bounded)')
 
     fig.tight_layout()
     gc.collect()
@@ -81,14 +95,19 @@ def plot_cell_positions(adata: anndata.AnnData,
                         **kwargs) -> None:
     """
     Plots the position of cells in the dataset
-
+    
+    Two distinct populations are being plotted: 
+    the population in the adata, and the population implied by raw_x and raw_y. 
+    The former are the remaining cells post filtering. The latter are all cells. 
+    
     Args: 
         adata - Anndata containing information about the cell
-        raw_x - Positions of the cells
-        raw_y
+        raw_x - x positions of cells
+        raw_y - y positions of cells
 
     Optional Args:
-        add_cricle: adding a circle patch for AFT data
+        add_circle: boolean. Whether to a circle patch describing the slide seq puck 
+        (applies only to Slide Seq data)
 
     Returns scatter plot of the cell positions 
     """
@@ -127,8 +146,8 @@ def plot_edge_histograms(distance_graph: sparse.csr_matrix,
                          decay_type: str,
                          m: int,
                          **kwargs) -> None:
-    '''An utility function to plot subplots of each histograms
-    using the plot_edge_histogram function for each distance and weights'''
+    '''A utility function to plot subplots of each histogram
+    using the plot_edge_histogram function for each distance and weight'''
 
     options = {'rows': 1, 'cols': 2, 'figsize': (10, 5)}
     options.update(kwargs)
@@ -160,6 +179,8 @@ def plot_weights(
 
     for m in range(max_m + 1):
         # Plots the weighted graph for each iterations of m
+        # Visualize weights in a spatial graph, 
+        # heavier weights represented by thicker lines
         plot_graph_weights(
             adata.obsm[coord_keys[2]],
             processing_dict[nbr_weight_decay]["weights"][m],
@@ -169,6 +190,7 @@ def plot_weights(
             figsize=options["figsize"],
             title=f"{fig_title}, m = {m}"
         )
+
 
         ax = plt.gca()
         ax.axis("equal")
@@ -239,7 +261,8 @@ def _adata_filter_self(adata: anndata.AnnData,
     """
     Filter AnnData object to remove all neighbour features (mean/AGF)
     leaving only self-expresssion features
-    Assumes AnnData object has .var column of type bool that defines if each feature is self or neighbour
+    Assumes AnnData object has .var column of type bool that defines 
+    if each feature is self or neighbour
     """
 
     adata_self = adata[:, adata.var[is_nbr_colname] == False].copy()
@@ -264,10 +287,10 @@ def plot_DE_genes_refined(adata_spatial: anndata.AnnData,
                           **kwargs) -> anndata.AnnData:
     '''
     Function to plot Differentially Expressed (DE) genes 
-    by self-expression for the refined anndata
+    by self-expression 
 
     Args:
-        adata_spatial: this should be the BANKSY matrix
+        adata_spatial: this should be the adata containing the BANKSY matrix
 
     Optional args:
         save_fig (default = False)
