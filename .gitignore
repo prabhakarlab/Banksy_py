@@ -1,32 +1,69 @@
-# Python cache files
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
 
-# Jupyter Notebook checkpoints
-.ipynb_checkpoints/
+# Distribution / packaging
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 
-# macOS files
+# Virtual environments
+venv/
+ENV/
+env/
+.venv/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
 .DS_Store
+Thumbs.db
 .AppleDouble
 .LSOverride
 
-# Data files (large datasets)
-*.h5ad
-*.csv
-data/slide_seq/v2/*.csv
-data/slide_seq/v2/*.h5ad
+# Jupyter
+.ipynb_checkpoints/
+
+# Test coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Documentation builds
+docs/_build/
 
 # Temporary/output directories
 tmp_png/
 **/tmp_png/
 
-# Test notebooks (if you don't want to commit them)
+# Test notebooks
 tests.ipynb
 test.ipynb
 
-# IDE settings (optional)
-.vscode/
-.idea/
+# Data files - ONLY ignore slide_seq v2 (large files)
+# Keep v1 and starmap data in repo
+data/slide_seq/v2/*.csv
+data/slide_seq/v2/*.h5ad
