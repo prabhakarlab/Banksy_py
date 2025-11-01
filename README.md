@@ -19,76 +19,118 @@ BANKSY is applicable to a wide variety of spatial technologies (e.g. 10x Visium,
 This Python version of BANKSY (compatible with `Scanpy`), we show how BANKSY can be used for task **1** (improving cell-type assignment) using Slide-seq and Slide-seq V2 mouse cerebellum datasets. 
 The R version of BANKSY is available here (https://github.com/prabhakarlab/Banksy).
 
-## <b> Prerequisites <a name="prereqs"></a>  </b>
+## <b> Installation </b>
 
-### System requirements: <a name="sysreqs"></a>
+### From GitHub (Recommended)
 
-Machine with at least 16 GB of RAM. `BANKSY` is extremely scalable and fast even on CPU for large datasets. 
+Install the latest version directly from GitHub:
 
-### Software requirements: <a name="softreqs"></a>
+```bash
+# Create a conda environment (recommended)
+conda create -n banksy python=3.10
+conda activate banksy
 
-This software requires the following packages and has been tested on the following versions:
+# Install from GitHub
+pip install git+https://github.com/prabhakarlab/Banksy_py.git
 
-1.	Python >= 3.8
-2.	Scanpy >= 1.8.1
-3. Anndata >= 0.7.1
-4.	numpy >= 1.21
-5.	scipy >= 1.6
-6.	umap >= 0.5.1
-7.	scikit-learn >= 0.24.2
-8.	python-igraph >= 0.9
-9. leidenalg 
+# Or with Jupyter notebook support
+pip install "git+https://github.com/prabhakarlab/Banksy_py.git#egg=banksy_py[notebooks]"
 
-#### (Optional) As alternatives to `leiden` clustering, we also support `mclust` and `louvain`. To use these clustering algorithms, you need these additional packages:
+# Or with everything including Jupyter notebook support and the optional mclust. 
+pip install "git+https://github.com/prabhakarlab/Banksy_py.git#egg=banksy_py[all]"
+```
 
-#### For mclust
-- R == 4.2.3 
-- r-mclust == 6.0.0 
-- rpy2 >= 3.4.0
+### From Source (For Development)
 
-#### For louvain (via `sc.tl.louvain`)
-- louvain
+For the latest development version or to contribute:
 
-## <b> Getting Started <a name="getstart"></a> </b>
+```bash
+# Clone the repository
+git clone https://github.com/prabhakarlab/Banksy_py.git
+cd Banksy_py
 
-### Installation via Anaconda (recommended) <a name="install"></a>
+# Create a conda environment
+conda create -n banksy python=3.10
+conda activate banksy
 
-To use ``Banksy_py``, we recommend setting up a ``conda`` environment and installing the prequisite packages, then cloning this repository.
+# Install in editable mode
+pip install -e .                    # Core package only
+pip install -e ".[notebooks]"       # With Jupyter support
+pip install -e ".[all]"             # Everything (includes mclust support via rpy2)
+```
 
-      (base) $ conda create --name banksy
-      (base) $ conda activate banksy
-      (banksy) $ conda install -c conda-forge scanpy python-igraph leidenalg
-      (banksy) $ git clone https://github.com/prabhakarlab/Banksy_py.git
-      (banksy) $ cd Banksy_py
+### From PyPI (Coming Soon)
 
-To run the examples presented in `juypter` notebooks, install the extensions for `juypter`.
+Once v1.0.0 is released on PyPI, you'll be able to install with:
 
-      (banksy) $ conda install -c conda-forge jupyter
+```bash
+pip install banksy_py              # Core package
+pip install banksy_py[notebooks]   # With Jupyter support
+pip install banksy_py[all]         # Everything (includes mclust support via rpy2)
+```
 
-Try out `BANKSY` by running the examples in the provide ipython notebooks: [`slideseqv1_analysis.ipynb`](./slideseqv1_analysis.ipynb) and/or [`slideseqv2_analysis.ipynb`](./slideseqv2_analysis.ipynb). More details on running `BANKSY` are provided within the notebooks.
+**Note:** PyPI release is pending. Use installation from GitHub or source for now.
 
-To run the `slideseq_v2` dataset, please to download the data from the [original source](https://singlecell.broadinstitute.org/single_cell/study/SCP948) and save it in the `data/slide_seq/v2` folder.
+### Requirements
 
-### Installation from `environment.yml` file <a name="install"></a>
+- **Python:** >= 3.8, < 3.12
+- **System:** 16 GB RAM minimum (you might need more for large datasets)
 
-Users can directly install the prequisite packages (which replicates our Anaconda environment) from `environment.yml` here after cloning in this repository:
+Core dependencies are automatically installed:
+- `anndata`, `numpy`, `scipy`, `pandas`
+- `scikit-learn`, `matplotlib`, `seaborn`
+- `scanpy`, `umap-learn`
+- `python-igraph`, `leidenalg`
+- `h5py`
 
-      (base) $ git clone https://github.com/prabhakarlab/Banksy_py.git
-      (base) $ cd Banksy_py
-      (base) $ conda env create --name banksy --file=environment.yml
-      (base) $ conda activate banksy
+### Optional Dependencies
 
-### Installation using `pip` from `requirements.txt` file <a name="install"></a>
+**For Jupyter notebooks:**
+```bash
+pip install banksy_py[notebooks]         # From PyPI (when available)
+pip install -e ".[notebooks]"            # From repo directory (development)
+```
 
-Users who have `python=3.8-3.11` and `pip` can also install our environment from `requirements.txt` here after cloning in this repository:
+**For mclust clustering (requires R):**
+```bash
+pip install banksy_py[mclust]            # From PyPI (when available)
+pip install -e ".[mclust]"               # From repo directory (development)
+# Also requires R >= 4.2.3 with mclust >= 6.0.0 installed
+```
 
-      $ git clone https://github.com/prabhakarlab/Banksy_py.git
-      $ cd Banksy_py
-      $ pip install -r requirements.txt
+### Data Download
 
-### Installation via PyPI (Coming Soon) <a name="install"></a>
+The Slide-seq V2 dataset is too large for the repository. Download it from the [original source](https://singlecell.broadinstitute.org/single_cell/study/SCP948) and place files in `data/slide_seq/v2/`. See [data/slide_seq/v2/README.md](data/slide_seq/v2/README.md) for details.
 
-We are working on depositing this package in the PyPI repository for future users via `pip install banksy`.
+## <b> Quick Start </b>
+
+```python
+# Import from submodules
+from banksy.initialize_banksy import initialize_banksy
+from banksy.run_banksy import run_banksy_multiparam
+from banksy_utils.load_data import load_adata
+
+# Load your spatial transcriptomics data
+adata = load_adata("path/to/your/data.h5ad")
+
+# Initialize BANKSY
+banksy_dict = initialize_banksy(
+    adata,
+    coord_keys=("x", "y"),
+    k_geom=15,
+    nbr_weight_decay="scaled_gaussian"
+)
+
+# Run clustering for multiple lambda values
+results_df = run_banksy_multiparam(
+    adata,
+    banksy_dict,
+    lambda_list=[0.0, 0.2, 0.5, 0.8],
+    resolutions=[0.5, 1.0]
+)
+```
+
+For detailed examples, see the [example notebooks](./slideseqv1_analysis.ipynb).
 
 ## <b> General Steps of the BANKSY algorithm </b>
 
@@ -149,9 +191,9 @@ Object for convenient computation with class labels. Converts labels to sparse o
 ## <b> Examples to get started </b>
 We recommend the following examples to get started with the `BANKSY` package
 
-1. Analyzing [Slideseqv1](./slideseqv1_analysis.ipynb) dataset with BANKSY
-2. Analyzing [Slideseqv2](./slideseqv2_analysis.ipynb) dataset with BANKSY
-3. Analyzing [Starmap](./starmap_analysis.ipynb) dataset 
+1. Analyzing [Slideseqv1](./slideseqv1_analysis.ipynb) dataset.
+2. Analyzing [Slideseqv2](./slideseqv2_analysis.ipynb) dataset. 
+3. Analyzing [Starmap](./starmap_analysis.ipynb) dataset. 
 
 ## <b> Reproducing results from our manuscript </b>
 To reproduce the results from our manuscript, please use the branch `BANKSY-manuscript`.
@@ -167,13 +209,13 @@ page](https://github.com/prabhakarlab/Banksy_py/issues). Our team will attempt t
 
 * **Yifei Yue** (https://github.com/yifei-1021)
 
+* **Vipul Singhal (maintainer)** (https://github.com/vipulsinghal02)
+
 ## <b> Acknowledgments <a name="ack"></a> </b>
 
-* **Vipul Singhal** - *developed R version of BANKSY, compatible with seurat* - (https://github.com/vipulsinghal02)
+* **Vipul Singhal** - *Creator of the BANKSY algorithm; also developed R implementation, compatible with Seurat* - (https://github.com/vipulsinghal02)
 
-* **Joseph Lee** - *developed R version of BANKSY, compatible with seurat* - (https://github.com/jleechung)
-
-Refer to `requirements.txt` for the supported versions of different packages
+* **Joseph Lee** - *developed R implementation of BANKSY, compatible with Seurat* - (https://github.com/jleechung)
 
 ### <b> Citations </b>
 If you want to use or cite BANKSY, please refer to the following paper:
