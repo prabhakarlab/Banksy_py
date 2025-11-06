@@ -4,10 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "banksy_py"
-version = "1.0.0"
+version = "1.2.1"
 description = "BANKSY: Spatial Clustering Algorithm that Unifies Cell-Typing and Tissue Domain Segmentation. It reduces the spatial clustering problem to a previously solved problem--generic graph based clustering--by augmenting transcriptional signatures with transcriptional features averaged over spatial microenvironments."
 readme = "README.md"
-requires-python = ">=3.8,<3.12"
+requires-python = ">=3.8,<3.13"
 license = {text = "GPL-3.0"}
 
 authors = [
@@ -39,6 +39,7 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
 ]
 
 dependencies = [
