@@ -98,6 +98,13 @@ For mclust clustering support (requires R):
 pip install -e ".[mclust]"  # From source
 ```
 
+For all optional dependencies:
+```bash
+pip install -e ".[all]"  # From source
+# or
+pip install "banksy_py[all]"  # From PyPI (when available)
+
+
 #### Quick Start
 
 ```python

@@ -9,7 +9,7 @@ For more details, see: https://github.com/prabhakarlab/Banksy_py
 """
 
 __version__ = "1.2.1"
-__author__ = "Vipul Singhal, Nigel Chou, Joseph Lee, Yifei Yue"
+__author__ = "Nigel Chou, Yifei Yue, Vipul Singhal"
 
 # Users should import from submodules:
 # from banksy.initialize_banksy import initialize_banksy
