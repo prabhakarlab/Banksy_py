@@ -7,7 +7,11 @@ Returns: Annadata object
 
 Yifei 15 May 2023
 """
-from IPython.display import display
+# Use IPython display if available, otherwise fall back to print
+try:
+    from IPython.display import display
+except ImportError:
+    display = print
 
 import os
 import numpy as np

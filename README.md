@@ -54,44 +54,95 @@ This software requires the following packages and has been tested on the followi
 
 ## <b> Getting Started <a name="getstart"></a> </b>
 
-### Installation via Anaconda (recommended) <a name="install"></a>
+### Installation <a name="install"></a>
 
-To use ``Banksy_py``, we recommend setting up a ``conda`` environment and installing the prequisite packages, then cloning this repository.
+BANKSY is now pip-installable! Choose one of the following installation methods:
 
-      (base) $ conda create --name banksy
-      (base) $ conda activate banksy
-      (banksy) $ conda install -c conda-forge scanpy python-igraph leidenalg
-      (banksy) $ git clone https://github.com/prabhakarlab/Banksy_py.git
-      (banksy) $ cd Banksy_py
+#### Option 1: Install from PyPI (Coming Soon)
 
-To run the examples presented in `juypter` notebooks, install the extensions for `juypter`.
+Once available on PyPI, you'll be able to install with:
 
-      (banksy) $ conda install -c conda-forge jupyter
+```bash
+pip install banksy_py
+```
 
-Try out `BANKSY` by running the examples in the provide ipython notebooks: [`slideseqv1_analysis.ipynb`](./slideseqv1_analysis.ipynb) and/or [`slideseqv2_analysis.ipynb`](./slideseqv2_analysis.ipynb). More details on running `BANKSY` are provided within the notebooks.
+#### Option 2: Install from GitHub (Recommended)
 
-To run the `slideseq_v2` dataset, please to download the data from the [original source](https://singlecell.broadinstitute.org/single_cell/study/SCP948) and save it in the `data/slide_seq/v2` folder.
+Install directly from the GitHub repository:
 
-### Installation from `environment.yml` file <a name="install"></a>
+```bash
+pip install git+https://github.com/prabhakarlab/Banksy_py.git
+```
 
-Users can directly install the prequisite packages (which replicates our Anaconda environment) from `environment.yml` here after cloning in this repository:
+#### Option 3: Install from Source (For Development)
 
-      (base) $ git clone https://github.com/prabhakarlab/Banksy_py.git
-      (base) $ cd Banksy_py
-      (base) $ conda env create --name banksy --file=environment.yml
-      (base) $ conda activate banksy
+Clone the repository and install in editable mode:
 
-### Installation using `pip` from `requirements.txt` file <a name="install"></a>
+```bash
+git clone https://github.com/prabhakarlab/Banksy_py.git
+cd Banksy_py
+pip install -e .
+```
 
-Users who have `python>=3.8` and `pip` can also install our environment from `requirements.txt` here after cloning in this repository:
+#### Optional Dependencies
 
-      $ git clone https://github.com/prabhakarlab/Banksy_py.git
-      $ cd Banksy_py
-      $ pip install -r requirements.txt
+For Jupyter notebook support:
+```bash
+pip install -e ".[notebooks]"  # From source
+# or
+pip install "banksy_py[notebooks]"  # From PyPI (when available)
+```
 
-### Installation via PyPI (Coming Soon) <a name="install"></a>
+For mclust clustering support (requires R):
+```bash
+pip install -e ".[mclust]"  # From source
+```
 
-We are working on depositing this package in the PyPI repository for future users via `pip install banksy`.
+For all optional dependencies:
+```bash
+pip install -e ".[all]"  # From source
+# or
+pip install "banksy_py[all]"  # From PyPI (when available)
+
+
+#### Quick Start
+
+```python
+import scanpy as sc
+from banksy.initialize_banksy import initialize_banksy
+from banksy.run_banksy import run_banksy_multiparam
+
+# Load your spatial transcriptomics data
+adata = sc.read_h5ad("your_data.h5ad")
+
+# Initialize BANKSY
+coord_keys = ('x', 'y', 'spatial')  # Adjust based on your data
+banksy_dict = initialize_banksy(
+    adata,
+    coord_keys=coord_keys,
+    num_neighbours=15,
+    nbr_weight_decay='scaled_gaussian'
+)
+
+# Run BANKSY clustering
+results_df = run_banksy_multiparam(
+    adata,
+    banksy_dict,
+    lambda_list=[0.2],
+    resolutions=[0.5, 1.0]
+)
+```
+
+#### Example Notebooks
+
+Try out `BANKSY` using the provided example notebooks:
+- [slideseqv1_analysis.ipynb](./slideseqv1_analysis.ipynb) - Slide-seq V1 cerebellum
+- [slideseqv2_analysis.ipynb](./slideseqv2_analysis.ipynb) - Slide-seq V2 cerebellum
+- [starmap_analysis.ipynb](./starmap_analysis.ipynb) - STARmap visual cortex
+- [CODEX_B006_ascending.ipynb](./CODEX_B006_ascending.ipynb) - CODEX colon tissue
+- [DLPFC_concatenate_multisample.ipynb](./DLPFC_concatenate_multisample.ipynb) - Multi-sample analysis
+
+**Note**: To run the `slideseq_v2` dataset, download the data from the [original source](https://singlecell.broadinstitute.org/single_cell/study/SCP948) and save it in the `data/slide_seq/v2` folder.
 
 ## <b> General Steps of the BANKSY algorithm </b>
 

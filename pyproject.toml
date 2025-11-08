@@ -1,0 +1,91 @@
+[build-system]
+requires = ["setuptools>=65.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "banksy_py"
+version = "1.2.1"
+description = "BANKSY: Spatial Clustering Algorithm that Unifies Cell-Typing and Tissue Domain Segmentation. It reduces the spatial clustering problem to a previously solved problem--generic graph based clustering--by augmenting transcriptional signatures with transcriptional features averaged over spatial microenvironments."
+readme = "README.md"
+requires-python = ">=3.8,<3.13"
+license = {text = "GPL-3.0"}
+
+authors = [
+    {name = "Nigel Chou", email = "Nigel_Chou@gis.a-star.edu.sg"},
+    {name = "Yifei Yue"},
+    {name = "Vipul Singhal", email = "vs@alumni.caltech.edu"}
+]
+
+maintainers = [
+    {name = "Vipul Singhal"}
+]
+
+keywords = [
+    "spatial transcriptomics",
+    "clustering",
+    "single-cell",
+    "spatial omics",
+    "bioinformatics",
+    "BANKSY"
+]
+
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+dependencies = [
+    "anndata>=0.8.0",
+    "numpy>=1.21,<2.0",
+    "scipy>=1.7.0",
+    "pandas>=1.3.0",
+    "scikit-learn>=1.0.0",
+    "matplotlib>=3.4.0",
+    "seaborn>=0.11.0",
+    "scanpy>=1.8.0",
+    "umap-learn>=0.5.0",
+    "python-igraph>=0.9.0",
+    "leidenalg>=0.8.0",
+    "h5py>=3.0.0",
+]
+
+[project.optional-dependencies]
+notebooks = [
+    "jupyter>=1.0",
+    "ipykernel>=6.0",
+]
+dev = [
+    "pytest>=7.0",
+    "jupyter>=1.0",
+    "ipykernel>=6.0",
+]
+mclust = [
+    "rpy2>=3.4.0",
+]
+all = [
+    "jupyter>=1.0",
+    "ipykernel>=6.0",
+    "pytest>=7.0",
+    "rpy2>=3.4.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/prabhakarlab/Banksy_py"
+Documentation = "https://github.com/prabhakarlab/Banksy_py/blob/main/README.md"
+Repository = "https://github.com/prabhakarlab/Banksy_py"
+"Bug Tracker" = "https://github.com/prabhakarlab/Banksy_py/issues"
+Publication = "https://www.nature.com/articles/s41588-024-01664-3"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
