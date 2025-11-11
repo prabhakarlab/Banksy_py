@@ -8,7 +8,7 @@ cell with an average of the transcriptomes of its spatial neighbors.
 For more details, see: https://github.com/prabhakarlab/Banksy_py
 """
 
-__version__ = "1.3.0"
+__version__ = "1.3.1"
 __author__ = "Nigel Chou, Yifei Yue, Vipul Singhal"
 
 # Users should import from submodules:

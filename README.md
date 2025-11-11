@@ -1,4 +1,4 @@
-# <b> BANKSY:  Spatial Clustering Algorithm that Unifies Cell-Typing and Tissue Domain Segmentation (v1.3.0) </b>
+# <b> BANKSY:  Spatial Clustering Algorithm that Unifies Cell-Typing and Tissue Domain Segmentation (v1.3.1) </b>
 
 ### *Vipul Singhal\*, Nigel Chou\*, Joseph Lee, Yifei Yue, Jinyue Liu, Wan Kee Chock, Li Lin, YunChing Chang, Erica Teo, Hwee Kuan Lee, Kok Hao Chen<sup>#</sup> and Shyam Prabhakar<sup>#</sup>* <br>
 
@@ -20,7 +20,7 @@ This Python version of BANKSY (compatible with `Scanpy`), we show how BANKSY can
 The R version of BANKSY is available here (https://github.com/prabhakarlab/Banksy).
 
 Changes for v1.3.0:
-- Now pip-installable! Install with `pip install banksy_py`
+- Now pip-installable! Install with `pip install pybanksy`
 - Moved to modern src/ package layout
 - Added pyproject.toml for standardized builds
 - Python 3.8-3.12 support
@@ -30,51 +30,51 @@ Changes for v1.3.0:
 Changes for v1.2.1:
 - AGF has been corrected to align with R version. Normalization is with mean neighbour expression rather than mean of the modulated expression ($e^{\phi}$)
 
-## <b> Prerequisites <a name="prereqs"></a>  </b>
+## <b> Prerequisites <a name="prereqs"></a> </b>
 
-### System requirements: <a name="sysreqs"></a>
+### Requirements <a name="sysreqs"></a>
 
-Machine with at least 16 GB of RAM. `BANKSY` is extremely scalable and fast even on CPU for large datasets. 
+- **Python**: 3.8 - 3.12
+- **RAM**: At least 16 GB recommended
+- **Dependencies**: Automatically installed via pip (see `pyproject.toml`)
 
-### Software requirements: <a name="softreqs"></a>
+### Optional Dependencies
 
-This software requires the following packages and has been tested on the following versions:
+**For mclust clustering** (alternative to Leiden):
 
-1.	Python >= 3.8
-2.	Scanpy >= 1.8.1
-3. Anndata >= 0.7.1
-4.	numpy >= 1.21
-5.	scipy >= 1.6
-6.	umap >= 0.5.1
-7.	scikit-learn >= 0.24.2
-8.	python-igraph >= 0.9
-9. leidenalg 
+```bash
+pip install "pybanksy[mclust]"
+```
 
-#### (Optional) As alternatives to `leiden` clustering, we also support `mclust` and `louvain`. To use these clustering algorithms, you need these additional packages:
+Requires R and rpy2.
 
-#### For mclust
-- R == 4.2.3 
-- r-mclust == 6.0.0 
-- rpy2 >= 3.4.0
+**For Jupyter notebooks**:
 
-#### For louvain (via `sc.tl.louvain`)
-- louvain
+```bash
+pip install "pybanksy[notebooks]"
+```
+
+**For everything** (mclust + Jupyter):
+
+```bash
+pip install "pybanksy[all]"
+```
+
+**Note**: BANKSY uses Leiden clustering by default (included). Advanced users can also use any clustering method on the BANKSY matrix, including `scanpy.tl.louvain()`. 
 
 ## <b> Getting Started <a name="getstart"></a> </b>
 
 ### Installation <a name="install"></a>
 
-BANKSY is now pip-installable! Choose one of the following installation methods:
+Choose one of the following installation methods:
 
-#### Option 1: Install from PyPI (Coming Soon)
-
-Once available on PyPI, you'll be able to install with:
+#### Option 1: Install from PyPI
 
 ```bash
-pip install banksy_py
+pip install pybanksy
 ```
 
-#### Option 2: Install from GitHub (Recommended)
+#### Option 2: Install from GitHub 
 
 Install directly from the GitHub repository:
 
@@ -98,7 +98,7 @@ For Jupyter notebook support:
 ```bash
 pip install -e ".[notebooks]"  # From source
 # or
-pip install "banksy_py[notebooks]"  # From PyPI (when available)
+pip install "pybanksy[notebooks]"  # From PyPI (when available)
 ```
 
 For mclust clustering support (requires R):
@@ -110,7 +110,7 @@ For all optional dependencies:
 ```bash
 pip install -e ".[all]"  # From source
 # or
-pip install "banksy_py[all]"  # From PyPI (when available)
+pip install "pybanksy[all]"  # From PyPI (when available)
 
 
 #### Quick Start
@@ -221,31 +221,31 @@ To reproduce the results from our manuscript, please use the branch `BANKSY-manu
 ## <b> Contributing </b>
 
 Bug reports, questions, request for enhancements or other contributions can be raised at the [issue
-page](https://github.com/prabhakarlab/Banksy_py/issues). Our team will attempt to resolve them best the we could.
+page](https://github.com/prabhakarlab/Banksy_py/issues), or you may submit a pull request with your changes. 
 
 ## <b> Authors <a name="authors"></a> </b>
 
 * **Nigel Chou** (https://github.com/chousn)
 
+* **Vipul Singhal** (https://github.com/vipulsinghal02)
+
 * **Yifei Yue** (https://github.com/yifei-1021)
 
 ## <b> Acknowledgments <a name="ack"></a> </b>
 
-* **Vipul Singhal** - *developed R version of BANKSY, compatible with seurat* - (https://github.com/vipulsinghal02)
+* **Joseph Lee** (https://github.com/jleechung)
 
-* **Joseph Lee** - *developed R version of BANKSY, compatible with seurat* - (https://github.com/jleechung)
+* **Wang Lurong** (https://github.com/lurongw)
 
-* **Wang Lurong** - *update AGF computation in Banksy_py* - (https://github.com/lurongw)
-
-Refer to `requirements.txt` for the supported versions of different packages
+Refer to `pyproject.toml` for the supported versions of different packages.
 
 ### <b> Citations </b>
 If you want to use or cite BANKSY, please refer to the following paper:
 
 ```
-BANKSY: A Spatial Clustering Algorithm that Unifes Cell Typing and Tissue Domain Segmentation, (submitted).  
+Singhal, V., Chou, N., Lee, J. et al. BANKSY unifies cell typing and tissue domain segmentation for scalable spatial omics data analysis. Nat Genet 56, 431–441 (2024). https://doi.org/10.1038/s41588-024-01664-3
 ```
-Article preprint can be accessed at the [bioRxiv repository](https://www.biorxiv.org/content/10.1101/2022.04.14.488259v1)
+Article can be accessed at the [Nature Genetics](https://www.nature.com/articles/s41588-024-01664-3)
 
 ### <b> License </b>
 This project is licensed under The GPLV3 license. See the [LICENSE.md](./LICENSE.md) file for details.
