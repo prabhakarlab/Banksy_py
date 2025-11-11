@@ -67,3 +67,11 @@ test.ipynb
 # Keep v1 and starmap data in repo
 data/slide_seq/v2/*.csv
 data/slide_seq/v2/*.h5ad
+
+# Large CODEX data files
+data/CODEX/CODEX_csv_data/*_merged.csv
+data/CODEX/CODEX_csv_data/BANKSY-Results/*.png
+
+# DLPFC sample directories (download separately)
+data/DLPFC/1515*/
+data/DLPFC/1516*/
