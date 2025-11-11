@@ -111,7 +111,7 @@ For all optional dependencies:
 pip install -e ".[all]"  # From source
 # or
 pip install "pybanksy[all]"  # From PyPI (when available)
-
+```
 
 #### Quick Start
 
@@ -133,6 +133,7 @@ banksy_dict = initialize_banksy(
 )
 
 # Run BANKSY clustering
+
 results_df = run_banksy_multiparam(
     adata,
     banksy_dict,
