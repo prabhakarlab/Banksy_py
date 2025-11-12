@@ -1,4 +1,4 @@
-# <b> BANKSY:  Spatial Clustering Algorithm that Unifies Cell-Typing and Tissue Domain Segmentation (v1.3.2) </b>
+# <b> BANKSY:  Spatial Clustering Algorithm that Unifies Cell-Typing and Tissue Domain Segmentation (v1.3.3) </b>
 
 ### *Vipul Singhal\*, Nigel Chou\*, Joseph Lee, Yifei Yue, Jinyue Liu, Wan Kee Chock, Li Lin, YunChing Chang, Erica Teo, Hwee Kuan Lee, Kok Hao Chen<sup>#</sup> and Shyam Prabhakar<sup>#</sup>* <br>
 
