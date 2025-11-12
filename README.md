@@ -113,6 +113,11 @@ pip install -e ".[all]"  # From source
 pip install "pybanksy[all]"  # From PyPI (when available)
 ```
 
+To run the harmony integration example notebook:
+```bash
+conda install bioconda::harmony-pytorch
+```
+
 #### Quick Start
 
 ```python
