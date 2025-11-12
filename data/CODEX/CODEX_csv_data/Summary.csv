@@ -1,21 +1,31 @@
 ,decay,lambda_param,num_pcs,resolution,num_labels,labels,adata,relabeled
-nonspatial_pc20_nc0.00_r0.10,nonspatial,0.0,20,0.10000000000000002,5,"Label object:
-Number of labels: 5, number of samples: 87145
-ids: [0 1 2 3 4], counts: [30332 21953 15379 14158  5323],
-","AnnData object with n_obs × n_vars = 87145 × 47
-    obs: 'x', 'y', 'array', 'Xcorr', 'Ycorr', 'Tissue_location', 'tissue', 'donor', 'unique_region', 'region', 'OLFM4', 'FAP', 'CD25', 'CollIV', 'CK7', 'MUC6', 'Cell Type', 'Cell Type em', 'Cell subtype', 'Neighborhood', 'Neigh_sub', 'Neighborhood_Ind', 'NeighInd_sub', 'Community', 'Major Community', 'Tissue Segment', 'Tissue Unit', 'labels_nonspatial_pc20_nc0.00_r0.10'
+scaled_gaussian_pc20_nc0.80_r0.08,scaled_gaussian,0.8,20,0.08,2,"Label object:
+Number of labels: 2, number of samples: 25403
+ids: [0 1], counts: [15260 10143],
+","AnnData object with n_obs × n_vars = 25403 × 141
+    obs: 'x', 'y', 'array', 'Xcorr', 'Ycorr', 'Tissue_location', 'tissue', 'donor', 'unique_region', 'region', 'OLFM4', 'FAP', 'CD25', 'CollIV', 'CK7', 'MUC6', 'Cell Type', 'Cell Type em', 'Cell subtype', 'Neighborhood', 'Neigh_sub', 'Neighborhood_Ind', 'NeighInd_sub', 'Community', 'Major Community', 'Tissue Segment', 'Tissue Unit', 'labels_scaled_gaussian_pc20_nc0.80_r0.09', 'labels_scaled_gaussian_pc20_nc0.80_r0.10'
     var: 'is_nbr', 'k'
     obsm: 'reduced_pc_20', 'reduced_pc_20_umap', 'coord_xy'","Label object:
-Number of labels: 5, number of samples: 87145
-ids: [0 1 2 3 4], counts: [21953 15379 30332 14158  5323],
+Number of labels: 2, number of samples: 25403
+ids: [0 2], counts: [15260 10143],
+"
+scaled_gaussian_pc20_nc0.80_r0.09,scaled_gaussian,0.8,20,0.09000000000000001,3,"Label object:
+Number of labels: 3, number of samples: 25403
+ids: [0 1 2], counts: [15269  6393  3741],
+","AnnData object with n_obs × n_vars = 25403 × 141
+    obs: 'x', 'y', 'array', 'Xcorr', 'Ycorr', 'Tissue_location', 'tissue', 'donor', 'unique_region', 'region', 'OLFM4', 'FAP', 'CD25', 'CollIV', 'CK7', 'MUC6', 'Cell Type', 'Cell Type em', 'Cell subtype', 'Neighborhood', 'Neigh_sub', 'Neighborhood_Ind', 'NeighInd_sub', 'Community', 'Major Community', 'Tissue Segment', 'Tissue Unit', 'labels_scaled_gaussian_pc20_nc0.80_r0.09', 'labels_scaled_gaussian_pc20_nc0.80_r0.10'
+    var: 'is_nbr', 'k'
+    obsm: 'reduced_pc_20', 'reduced_pc_20_umap', 'coord_xy'","Label object:
+Number of labels: 3, number of samples: 25403
+ids: [0 1 2], counts: [15269  3741  6393],
 "
 scaled_gaussian_pc20_nc0.80_r0.10,scaled_gaussian,0.8,20,0.10000000000000002,3,"Label object:
-Number of labels: 3, number of samples: 87145
-ids: [0 1 2], counts: [59053 27333   759],
-","AnnData object with n_obs × n_vars = 87145 × 141
-    obs: 'x', 'y', 'array', 'Xcorr', 'Ycorr', 'Tissue_location', 'tissue', 'donor', 'unique_region', 'region', 'OLFM4', 'FAP', 'CD25', 'CollIV', 'CK7', 'MUC6', 'Cell Type', 'Cell Type em', 'Cell subtype', 'Neighborhood', 'Neigh_sub', 'Neighborhood_Ind', 'NeighInd_sub', 'Community', 'Major Community', 'Tissue Segment', 'Tissue Unit', 'labels_scaled_gaussian_pc20_nc0.80_r0.10'
+Number of labels: 3, number of samples: 25403
+ids: [0 1 2], counts: [15260  6385  3758],
+","AnnData object with n_obs × n_vars = 25403 × 141
+    obs: 'x', 'y', 'array', 'Xcorr', 'Ycorr', 'Tissue_location', 'tissue', 'donor', 'unique_region', 'region', 'OLFM4', 'FAP', 'CD25', 'CollIV', 'CK7', 'MUC6', 'Cell Type', 'Cell Type em', 'Cell subtype', 'Neighborhood', 'Neigh_sub', 'Neighborhood_Ind', 'NeighInd_sub', 'Community', 'Major Community', 'Tissue Segment', 'Tissue Unit', 'labels_scaled_gaussian_pc20_nc0.80_r0.09', 'labels_scaled_gaussian_pc20_nc0.80_r0.10'
     var: 'is_nbr', 'k'
     obsm: 'reduced_pc_20', 'reduced_pc_20_umap', 'coord_xy'","Label object:
-Number of labels: 3, number of samples: 87145
-ids: [0 2 4], counts: [59053 27333   759],
+Number of labels: 3, number of samples: 25403
+ids: [0 1 2], counts: [15260  3758  6385],
 "

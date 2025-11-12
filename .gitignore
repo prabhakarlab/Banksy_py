@@ -75,3 +75,6 @@ data/CODEX/CODEX_csv_data/BANKSY-Results/*.png
 # DLPFC sample directories (download separately)
 data/DLPFC/1515*/
 data/DLPFC/1516*/
+
+# Old archived files
+old/
