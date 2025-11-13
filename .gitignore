@@ -78,3 +78,6 @@ data/DLPFC/1516*/
 
 # Old archived files
 old/
+
+# Specific files: 
+RELEASE_WORKFLOW.md

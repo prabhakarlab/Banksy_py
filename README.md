@@ -1,3 +1,12 @@
+[![PyPI](https://img.shields.io/pypi/v/pybanksy)](https://pypi.org/project/pybanksy/)
+[![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/prabhakarlab/Banksy_py?include_prereleases)](https://github.com/prabhakarlab/Banksy_py/releases)
+[![Python Version](https://img.shields.io/pypi/pyversions/pybanksy)](https://pypi.org/project/pybanksy/)
+[![Language](https://img.shields.io/github/languages/top/prabhakarlab/Banksy_py)](https://github.com/prabhakarlab/Banksy_py)
+[![Downloads](https://static.pepy.tech/badge/pybanksy)](https://pepy.tech/project/pybanksy)
+[![GitHub commit activity](https://img.shields.io/github/commit-activity/y/prabhakarlab/Banksy_py)](https://github.com/prabhakarlab/Banksy_py/graphs/commit-activity)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/prabhakarlab/Banksy_py/graphs/commit-activity)
+
+
 # <b> BANKSY:  Spatial Clustering Algorithm that Unifies Cell-Typing and Tissue Domain Segmentation (v1.3.4) </b>
 
 ### *Vipul Singhal\*, Nigel Chou\*, Joseph Lee, Yifei Yue, Jinyue Liu, Wan Kee Chock, Li Lin, YunChing Chang, Erica Teo, Hwee Kuan Lee, Kok Hao Chen<sup>#</sup> and Shyam Prabhakar<sup>#</sup>* <br>
