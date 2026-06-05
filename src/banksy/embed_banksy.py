@@ -43,7 +43,14 @@ def generate_banksy_matrix(adata: anndata.AnnData,
     for nbr_weight_decay in banksy_dict:
 
         # First create neighbour matrices
-        nbr_matrices = create_nbr_matrix(adata, banksy_dict, nbr_weight_decay, max_m, variance_balance)
+        nbr_matrices = create_nbr_matrix(
+            adata,
+            banksy_dict,
+            nbr_weight_decay,
+            max_m,
+            center=False,
+            variance_balance=variance_balance,
+        )
 
         # Create matrix list
         mat_list, concatenated = create_mat_list(adata, nbr_matrices, max_m)
