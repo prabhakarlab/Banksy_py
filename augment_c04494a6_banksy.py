@@ -1,12 +1,14 @@
 #!/usr/bin/env python
-"""Run BANKSY clustering for data/C04494A6.bin20_1.0.h5ad."""
+"""Created augmented matrix for data/C04494A6.bin20_1.0.h5ad."""
 
 from __future__ import annotations
 
 import argparse
 import os
 import random
+import time
 from pathlib import Path
+from typing import Any
 
 os.environ.setdefault("MPLCONFIGDIR", "/tmp/matplotlib-banksy")
 
@@ -19,12 +21,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from matplotlib.colors import ListedColormap
+from scipy.sparse import csr_matrix
 
-from banksy.cluster_methods import run_Leiden_partition
 from banksy.embed_banksy import generate_banksy_matrix
 from banksy.initialize_banksy import initialize_banksy
 from banksy_utils.color_lists import zeileis_28
-from banksy_utils.umap_pca import pca_umap
 
 
 def parse_args() -> argparse.Namespace:
@@ -55,8 +56,64 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Also write an annotated HVG-subset AnnData file.",
     )
+    parser.add_argument(
+        "--banksy-matrix-compression",
+        choices=("gzip", "lzf", "none"),
+        default="gzip",
+        help="Compression codec for the BANKSY matrix .h5ad backup.",
+    )
+    parser.add_argument(
+        "--banksy-matrix-compression-level",
+        type=int,
+        default=4,
+        help="gzip compression level for the BANKSY matrix .h5ad backup.",
+    )
     parser.add_argument("--seed", type=int, default=1234)
     return parser.parse_args()
+
+
+def default_banksy_matrix_output_path(
+    output_dir: Path, args: argparse.Namespace
+) -> Path:
+    lambda_token = f"{args.lambda_param:g}".replace(".", "p")
+    return output_dir / (
+        f"C04494A6_banksy_matrix"
+        f"_lambda{lambda_token}"
+        f"_kgeom{args.k_geom}"
+        f"_maxm{args.max_m}"
+        f"_hvg{args.n_top_hvg}"
+        ".h5ad"
+    )
+
+
+def save_banksy_matrix(
+    banksy_matrix: ad.AnnData,
+    output_path: Path | str,
+    *,
+    compression: str | None = "gzip",
+    compression_opts: int | None = 4,
+    metadata: dict[str, Any] | None = None,
+) -> Path:
+    """Persist a generated BANKSY matrix as compressed AnnData."""
+    output_path = Path(output_path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    if compression == "none":
+        compression = None
+    if compression != "gzip":
+        compression_opts = None
+
+    banksy_matrix.uns["banksy_matrix_backup"] = {
+        "format": "h5ad",
+        "compression": compression or "none",
+        **(metadata or {}),
+    }
+    banksy_matrix.write_h5ad(
+        output_path,
+        compression=compression,
+        compression_opts=compression_opts,
+    )
+    return output_path
 
 
 def make_colormap(num_labels: int) -> ListedColormap:
@@ -172,6 +229,7 @@ def main() -> None:
         flush=True,
     )
 
+    timer_start = time.perf_counter()
     banksy_dict = initialize_banksy(
         adata,
         coord_keys,
@@ -184,64 +242,41 @@ def main() -> None:
         plt_theta=False,
     )
 
-    banksy_dict, _ = generate_banksy_matrix(
+    banksy_dict, banksy_matrix = generate_banksy_matrix(
         adata,
         banksy_dict,
         lambda_list=[args.lambda_param],
         max_m=args.max_m,
     )
-    pca_umap(
-        banksy_dict,
-        pca_dims=[args.pca_dims],
-        plt_remaining_var=False,
-        add_umap=False,
-    )
-    results_df, _ = run_Leiden_partition(
-        banksy_dict,
-        resolutions=[args.resolution],
-        num_nn=50,
-        num_iterations=-1,
-        partition_seed=args.seed,
-        match_labels=False,
-        annotations=None,
-        verbose=False,
+    augmentation_elapsed_seconds = time.perf_counter() - timer_start
+    print(
+        "BANKSY augmentation runtime "
+        f"(initialize_banksy through generate_banksy_matrix): "
+        f"{augmentation_elapsed_seconds:.2f} seconds "
+        f"({augmentation_elapsed_seconds / 60:.2f} minutes)",
+        flush=True,
     )
 
-    result_name = results_df.index[0]
-    result = results_df.iloc[0]
-    labels = result["labels"].dense.astype(int)
-    cluster_key = f"BANKSY_{result_name}"
-    adata.obs[cluster_key] = pd.Categorical(labels.astype(str))
-
-    labels_path = output_dir / "banksy_clusters.csv"
-    pd.DataFrame(
-        {
-            "cell_id": adata.obs_names,
-            "x": np.asarray(adata.obsm["spatial"])[:, 0],
-            "y": np.asarray(adata.obsm["spatial"])[:, 1],
-            "banksy_cluster": labels,
-        }
-    ).to_csv(labels_path, index=False)
-
-    h5ad_path = None
-    if args.write_h5ad:
-        h5ad_path = output_dir / "C04494A6.bin20_1.0.banksy_clusters.h5ad"
-        adata.write_h5ad(h5ad_path)
-
-    plot_path = output_dir / "banksy_spatial_clusters.png"
-    title = (
-        "BANKSY clusters "
-        f"(lambda={args.lambda_param}, resolution={args.resolution}, "
-        f"{result['num_labels']} clusters)"
+    banksy_matrix_output = default_banksy_matrix_output_path(output_dir, args)
+    saved_banksy_matrix = save_banksy_matrix(
+        banksy_matrix,
+        banksy_matrix_output,
+        compression=args.banksy_matrix_compression,
+        compression_opts=args.banksy_matrix_compression_level,
+        metadata={
+            "input": args.input,
+            "n_obs": int(adata.n_obs),
+            "n_vars": int(adata.n_vars),
+            "lambda_param": float(args.lambda_param),
+            "k_geom": int(args.k_geom),
+            "max_m": int(args.max_m),
+            "n_top_hvg": int(args.n_top_hvg),
+            "nbr_weight_decay": "scaled_gaussian",
+            "seed": int(args.seed),
+            "augmentation_elapsed_seconds": round(augmentation_elapsed_seconds, 6),
+        },
     )
-    plot_spatial_clusters(adata, labels, plot_path, title)
-
-    print(f"Result: {result_name}")
-    print(f"Clusters: {result['num_labels']}")
-    print(f"Wrote plot: {plot_path}")
-    print(f"Wrote labels: {labels_path}")
-    if h5ad_path is not None:
-        print(f"Wrote annotated AnnData: {h5ad_path}")
+    print(f"Wrote BANKSY matrix backup: {saved_banksy_matrix}", flush=True)
 
 
 if __name__ == "__main__":
