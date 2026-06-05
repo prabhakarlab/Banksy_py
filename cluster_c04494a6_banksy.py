@@ -80,9 +80,11 @@ def plot_spatial_clusters(
 ) -> None:
     coords = np.asarray(adata.obsm["spatial"])
     unique_labels = np.array(sorted(np.unique(labels)))
-    remapped = pd.Series(labels).map(
-        {label: i for i, label in enumerate(unique_labels)}
-    ).to_numpy()
+    remapped = (
+        pd.Series(labels)
+        .map({label: i for i, label in enumerate(unique_labels)})
+        .to_numpy()
+    )
     cmap = make_colormap(len(unique_labels))
 
     fig, ax = plt.subplots(figsize=(9, 8))

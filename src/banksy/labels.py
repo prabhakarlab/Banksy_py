@@ -21,12 +21,11 @@ from banksy.csr_operations import row_normalize
 
 
 class Label(object):
-
-    def __init__(self,
-                 labels_dense: Union[np.ndarray, list],
-                 verbose: bool = True,
-                 ) -> None:
-
+    def __init__(
+        self,
+        labels_dense: Union[np.ndarray, list],
+        verbose: bool = True,
+    ) -> None:
         self.verbose = verbose
 
         # Check type, dimensions, ensure all elements non-negative
@@ -43,12 +42,10 @@ class Label(object):
             )
 
         assert labels_dense.ndim == 1, (
-            f"Label array has {labels_dense.ndim} dimensions, "
-            f"should be 1-dimensional."
+            f"Label array has {labels_dense.ndim} dimensions, should be 1-dimensional."
         )
         assert np.issubdtype(labels_dense.dtype, np.integer), (
-            f"Label array data type is {labels_dense.dtype}, "
-            f"should be integer."
+            f"Label array data type is {labels_dense.dtype}, should be integer."
         )
         assert np.amin(labels_dense) >= 0, (
             f"Some of the labels have negative values.\n"
@@ -106,27 +103,27 @@ class Label(object):
         return normalized one-hot sparse array of labels.
         """
         if self.normalized_onehot is None:
-            self.normalized_onehot = self.generate_normalized_onehot(
-                verbose=False
-            )
+            self.normalized_onehot = self.generate_normalized_onehot(verbose=False)
 
         return self.normalized_onehot
 
-    def generate_normalized_onehot(self,
-                                   verbose: bool = False,
-                                   ) -> csr_matrix:
+    def generate_normalized_onehot(
+        self,
+        verbose: bool = False,
+    ) -> csr_matrix:
         """
         generate a normalized onehot matrix where each row is
         normalized by the count of that label
         e.g. a row [0 1 1 0 0] will be converted to [0 0.5 0.5 0 0]
         """
-        return row_normalize(self.get_onehot().astype(np.float64),
-                             copy=True,
-                             verbose=verbose)
+        return row_normalize(
+            self.get_onehot().astype(np.float64), copy=True, verbose=verbose
+        )
 
-    def generate_onehot(self,
-                        verbose: bool = False,
-                        ) -> csr_matrix:
+    def generate_onehot(
+        self,
+        verbose: bool = False,
+    ) -> csr_matrix:
         """
         convert an array of labels to a
         num_labels x num_samples sparse one-hot matrix
@@ -143,17 +140,18 @@ class Label(object):
         data = np.ones_like(indices, dtype=np.int32)
 
         if verbose:
-            print(f"\n--- {self.num_labels} labels, "
-                  f"{self.num_samples} samples ---\n"
-                  f"initalized {indptr.shape} index ptr: {indptr}\n"
-                  f"initalized {indices.shape} indices: {indices}\n"
-                  f"initalized {data.shape} data: {data}\n")
+            print(
+                f"\n--- {self.num_labels} labels, "
+                f"{self.num_samples} samples ---\n"
+                f"initalized {indptr.shape} index ptr: {indptr}\n"
+                f"initalized {indices.shape} indices: {indices}\n"
+                f"initalized {data.shape} data: {data}\n"
+            )
 
         # update index pointer and indices row by row
         # -------------------------------------------
 
         for n, label in enumerate(self.ids):
-
             label_indices = np.nonzero(self.dense == label)[0]
             label_count = len(label_indices)
 
@@ -162,15 +160,18 @@ class Label(object):
             indptr[n + 1] = current_ptr
 
             if verbose:
-                print(f"indices for label {label}: {label_indices}\n"
-                      f"previous pointer: {previous_ptr}, "
-                      f"current pointer: {current_ptr}\n")
+                print(
+                    f"indices for label {label}: {label_indices}\n"
+                    f"previous pointer: {previous_ptr}, "
+                    f"current pointer: {current_ptr}\n"
+                )
 
             if current_ptr > previous_ptr:
                 indices[previous_ptr:current_ptr] = label_indices
 
-        return csr_matrix((data, indices, indptr),
-                          shape=(self.num_labels, self.num_samples))
+        return csr_matrix(
+            (data, indices, indptr), shape=(self.num_labels, self.num_samples)
+        )
 
 
 #
@@ -180,6 +181,7 @@ class Label(object):
 #
 #
 
+
 def _rand_binary_array(array_length, num_onbits):
     array = np.zeros(array_length, dtype=np.int32)
     array[:num_onbits] = 1
@@ -188,11 +190,12 @@ def _rand_binary_array(array_length, num_onbits):
 
 
 @timer
-def expand_labels(label: Label,
-                  max_label_id: int,
-                  sort_labels: bool = False,
-                  verbose: bool = True,
-                  ) -> Label:
+def expand_labels(
+    label: Label,
+    max_label_id: int,
+    sort_labels: bool = False,
+    verbose: bool = True,
+) -> Label:
     """
     Spread out label IDs such that they
     range evenly from 0 to max_label_id
@@ -207,8 +210,10 @@ def expand_labels(label: Label,
     (which it should usually be)
     """
     if verbose:
-        print(f"Expanding labels with ids: {label.ids} "
-              f"so that ids range from 0 to {max_label_id}\n")
+        print(
+            f"Expanding labels with ids: {label.ids} "
+            f"so that ids range from 0 to {max_label_id}\n"
+        )
 
     if sort_labels:
         ids = np.sort(copy.copy(label.ids))
@@ -232,10 +237,12 @@ def expand_labels(label: Label,
     expanded_ids[1:] += np.cumsum(extra)  # only add to 2nd label and above
 
     if verbose:
-        print(f"Label ids zerod: {ids_zeroed}.\n"
-              f"{multiple} to be inserted between each id: {inserted}\n"
-              f"{remainder} extra rows to be randomly inserted: {extra}\n"
-              f"New ids: {expanded_ids}")
+        print(
+            f"Label ids zerod: {ids_zeroed}.\n"
+            f"{multiple} to be inserted between each id: {inserted}\n"
+            f"{remainder} extra rows to be randomly inserted: {extra}\n"
+            f"New ids: {expanded_ids}"
+        )
 
     expanded_dense = (expanded_ids @ label.get_onehot()).astype(np.int32)
 
@@ -243,11 +250,12 @@ def expand_labels(label: Label,
 
 
 @timer
-def match_labels(labels_1: Label,
-                 labels_2: Label,
-                 extra_labels_assignment: str = "random",
-                 verbose: bool = True,
-                 ) -> Label:
+def match_labels(
+    labels_1: Label,
+    labels_2: Label,
+    extra_labels_assignment: str = "random",
+    verbose: bool = True,
+) -> Label:
     """
     Match second set of labels to first, returning a new Label object
     Uses scipy's version of the hungarian algroithm (linear_sum_assigment)
@@ -257,16 +265,17 @@ def match_labels(labels_1: Label,
     num_extra_labels = labels_2.num_labels - labels_1.num_labels
 
     if verbose:
-        print(f"Matching {labels_2.num_labels} labels "
-              f"against {labels_1.num_labels} labels.\n"
-              f"highest label ID in both is {max_id}.\n")
+        print(
+            f"Matching {labels_2.num_labels} labels "
+            f"against {labels_1.num_labels} labels.\n"
+            f"highest label ID in both is {max_id}.\n"
+        )
 
     onehot_1, onehot_2 = labels_1.get_onehot(), labels_2.get_onehot()
 
     cost_matrix = (onehot_1 @ onehot_2.T).toarray()
 
-    labels_match_1, labels_match_2 = linear_sum_assignment(cost_matrix,
-                                                           maximize=True)
+    labels_match_1, labels_match_2 = linear_sum_assignment(cost_matrix, maximize=True)
 
     if verbose:
         print("\nMatches:\n", list(zip(labels_match_1, labels_match_2)))
@@ -283,9 +292,11 @@ def match_labels(labels_1: Label,
         label_1 = labels_1.ids[index_1]
         label_2 = labels_2.ids[index_2]
         if verbose:
-            print(f"Assigning first set's {label_1} to "
-                  f"second set's {label_2}.\n"
-                  f"labels_left: {available_labels}")
+            print(
+                f"Assigning first set's {label_1} to "
+                f"second set's {label_2}.\n"
+                f"labels_left: {available_labels}"
+            )
         relabeled_ids[index_2] = label_1
         available_labels.remove(label_1)
 
@@ -293,7 +304,6 @@ def match_labels(labels_1: Label,
     # ---------------------------------------------------------
 
     if num_extra_labels > 0:
-
         unmatched_indices = np.nonzero(relabeled_ids == -1)[0]
 
         assert num_extra_labels == len(unmatched_indices), (
@@ -303,16 +313,19 @@ def match_labels(labels_1: Label,
         )
 
         if extra_labels_assignment == "random":
-            relabeled_ids[unmatched_indices] = np.random.choice(available_labels,
-                                                                size=num_extra_labels,
-                                                                replace=False, )
+            relabeled_ids[unmatched_indices] = np.random.choice(
+                available_labels,
+                size=num_extra_labels,
+                replace=False,
+            )
 
         elif extra_labels_assignment == "greedy":
 
-            def _insert_label(array: np.ndarray,
-                              max_length: int,
-                              added_labels: list = [],
-                              ) -> Tuple[np.ndarray, int, list]:
+            def _insert_label(
+                array: np.ndarray,
+                max_length: int,
+                added_labels: list = [],
+            ) -> Tuple[np.ndarray, int, list]:
                 """
                 insert a label in the middle of the largest interval
                 assumes array is alreay sorted!
@@ -337,16 +350,16 @@ def match_labels(labels_1: Label,
             if verbose:
                 print(f"already matched ids (sorted): {sorted_matched}")
 
-            _,_,added_labels = _insert_label(sorted_matched, labels_2.num_labels)
+            _, _, added_labels = _insert_label(sorted_matched, labels_2.num_labels)
 
-            relabeled_ids[unmatched_indices] = np.random.choice(added_labels,
-                                                                size=num_extra_labels,
-                                                                replace=False, )
+            relabeled_ids[unmatched_indices] = np.random.choice(
+                added_labels,
+                size=num_extra_labels,
+                replace=False,
+            )
 
         elif extra_labels_assignment == "optimized":
-            raise NotImplementedError(
-                f"haven't figured out how to do this yet.\n"
-            )
+            raise NotImplementedError(f"haven't figured out how to do this yet.\n")
 
         else:
             raise ValueError(
@@ -372,11 +385,12 @@ def match_labels(labels_1: Label,
     return Label(relabeled_dense, verbose=labels_2.verbose)
 
 
-def match_label_series(label_list: List[Label],
-                       least_labels_first: bool = True,
-                       extra_labels_assignment: str = "greedy",
-                       verbose: bool = True,
-                       ) -> Tuple[List[Label], int]:
+def match_label_series(
+    label_list: List[Label],
+    least_labels_first: bool = True,
+    extra_labels_assignment: str = "greedy",
+    verbose: bool = True,
+) -> Tuple[List[Label], int]:
     """
     Match a list of labels to each other, one after another
     in order of increasing (if least_labels_first is true)
@@ -388,39 +402,38 @@ def match_label_series(label_list: List[Label],
     max_num_labels = max(num_label_list)
     sort_indices = np.argsort(num_label_list)
 
-    print(f"\nMaximum number of labels = {max_num_labels}\n"
-          f"Indices of sorted list: {sort_indices}\n")
+    print(
+        f"\nMaximum number of labels = {max_num_labels}\n"
+        f"Indices of sorted list: {sort_indices}\n"
+    )
 
     ordered_relabels = []
 
     if least_labels_first:
         ordered_relabels.append(
-            expand_labels(label_list[sort_indices[0]],
-                          max_num_labels - 1)
+            expand_labels(label_list[sort_indices[0]], max_num_labels - 1)
         )
         if verbose:
-            print(f"First label, expanded label ids: "
-                  f"{ordered_relabels[0]}")
+            print(f"First label, expanded label ids: {ordered_relabels[0]}")
     else:
         # argsort is in asceding order, reverse it
         sort_indices = sort_indices[:, :, -1]
         # already has max number of labels, no need to expand
-        ordered_relabels.append(
-            label_list[sort_indices[0]]
-        )
+        ordered_relabels.append(label_list[sort_indices[0]])
 
     for index in sort_indices[1:]:
-
         current_label = label_list[index]
         previous_label = ordered_relabels[-1]
 
         if verbose:
-            print(f"\nRelabeling:\n{current_label}\n"
-                  f"with reference to\n{previous_label}\n"
-                  + "-" * 70 + "\n")
+            print(
+                f"\nRelabeling:\n{current_label}\n"
+                f"with reference to\n{previous_label}\n" + "-" * 70 + "\n"
+            )
 
         relabeled = match_labels(
-            previous_label, current_label,
+            previous_label,
+            current_label,
             extra_labels_assignment=extra_labels_assignment,
             verbose=verbose,
         )
@@ -428,8 +441,9 @@ def match_label_series(label_list: List[Label],
         ordered_relabels.append(relabeled)
 
     sort_indices_list = list(sort_indices)
-    original_order_relabels = [ordered_relabels[sort_indices_list.index(n)]
-                               for n in range(len(label_list))]
+    original_order_relabels = [
+        ordered_relabels[sort_indices_list.index(n)] for n in range(len(label_list))
+    ]
 
     return original_order_relabels, max_num_labels
 
@@ -447,9 +461,11 @@ def match_label_series(label_list: List[Label],
 #
 #
 
-def interlabel_connections(label: Label,
-                           weights_matrix: Union[csr_matrix, np.ndarray],
-                           ) -> np.ndarray:
+
+def interlabel_connections(
+    label: Label,
+    weights_matrix: Union[csr_matrix, np.ndarray],
+) -> np.ndarray:
     """
     compute connections strengths between labels,
     normalized by number of each label
@@ -481,19 +497,20 @@ def interlabel_connections(label: Label,
     return connections
 
 
-def plot_connections(label: Label,
-                     weights_matrix: Union[csr_matrix, np.ndarray],
-                     ax: mpl.axes.Axes,
-                     zero_self_connections: bool = True,
-                     normalize_by_self_connections: bool = False,
-                     shapes_style: bool = True,
-                     max_scale: float = 0.46,
-                     colormap_name: str = "Spectral",
-                     title_str="connection strengths between types",
-                     title_fontsize: float = 12,
-                     label_fontsize: float = 12,
-                     verbose: bool = True,
-                     ) -> None:
+def plot_connections(
+    label: Label,
+    weights_matrix: Union[csr_matrix, np.ndarray],
+    ax: mpl.axes.Axes,
+    zero_self_connections: bool = True,
+    normalize_by_self_connections: bool = False,
+    shapes_style: bool = True,
+    max_scale: float = 0.46,
+    colormap_name: str = "Spectral",
+    title_str="connection strengths between types",
+    title_fontsize: float = 12,
+    label_fontsize: float = 12,
+    verbose: bool = True,
+) -> None:
     """
     plot the connections between labels
     given as a num_label by num_label matrix of connection strengths
@@ -521,49 +538,51 @@ def plot_connections(label: Label,
     id_colours = {id: cmap(id / label.max_id) for id in label.ids}
 
     if shapes_style:
-
         # Coloured triangles with size representing connection strength
         # -------------------------------------------------------------
 
-        left_triangle = np.array((
-            (-1., 1.),
-            # (1., 1.),
-            (1., -1.),
-            (-1., -1.)
-        ))
+        left_triangle = np.array(
+            (
+                (-1.0, 1.0),
+                # (1., 1.),
+                (1.0, -1.0),
+                (-1.0, -1.0),
+            )
+        )
 
-        right_triangle = np.array((
-            (-1., 1.),
-            (1., 1.),
-            (1., -1.),
-            # (-1., -1.)
-        ))
+        right_triangle = np.array(
+            (
+                (-1.0, 1.0),
+                (1.0, 1.0),
+                (1.0, -1.0),
+                # (-1., -1.)
+            )
+        )
 
         polygon_list = []
         colour_list = []
 
-        ax.set_ylim(- 0.55, label.num_labels - 0.45)
-        ax.set_xlim(- 0.55, label.num_labels - 0.45)
+        ax.set_ylim(-0.55, label.num_labels - 0.45)
+        ax.set_xlim(-0.55, label.num_labels - 0.45)
         # ax.invert_yaxis()
 
         for label_1 in range(connections.shape[0]):
             for label_2 in range(connections.shape[1]):
-
                 if label_1 <= label_2:
-
                     for triangle in [left_triangle, right_triangle]:
                         center = np.array((label_1, label_2))[np.newaxis, :]
                         scale_factor = connections[label_1, label_2] / connections_max
                         offsets = triangle * max_scale * scale_factor
                         polygon_list.append(center + offsets)
 
-                    colour_list += (id_colours[label.ids[label_2]],
-                                    id_colours[label.ids[label_1]])
+                    colour_list += (
+                        id_colours[label.ids[label_2]],
+                        id_colours[label.ids[label_1]],
+                    )
 
-        collection = PolyCollection(polygon_list,
-                                    facecolors=colour_list,
-                                    edgecolors="face",
-                                    linewidths=0)
+        collection = PolyCollection(
+            polygon_list, facecolors=colour_list, edgecolors="face", linewidths=0
+        )
 
         ax.add_collection(collection)
 
@@ -571,36 +590,37 @@ def plot_connections(label: Label,
         ax.xaxis.set_tick_params(pad=-2)
 
     else:
-
         # Heatmap of connection strengths
         # -------------------------------
 
-        heatmap = ax.imshow(connections,
-                            cmap='viridis',
-                            interpolation="nearest")
+        heatmap = ax.imshow(connections, cmap="viridis", interpolation="nearest")
 
         divider = make_axes_locatable(ax)
         cax = divider.append_axes("right", size="5%", pad=0.1)
 
         fig.colorbar(heatmap, cax=cax)
-        cax.tick_params(axis='both', which='major', labelsize=6, rotation=-45)
+        cax.tick_params(axis="both", which="major", labelsize=6, rotation=-45)
 
         # change formatting if values too small
         if connections_max < 0.001:
-            cax.yaxis.set_major_formatter(StrMethodFormatter('{x:,.1e}'))
+            cax.yaxis.set_major_formatter(StrMethodFormatter("{x:,.1e}"))
 
     # Set tick labels positions and colour
     # ------------------------------------
 
-    ax.set_aspect('equal')
+    ax.set_aspect("equal")
 
-    ax.set_xticks(np.arange(label.num_labels), )
-    ax.set_xticklabels(label.ids, fontsize=label_fontsize,
-                       fontweight="bold", rotation=0)
+    ax.set_xticks(
+        np.arange(label.num_labels),
+    )
+    ax.set_xticklabels(
+        label.ids, fontsize=label_fontsize, fontweight="bold", rotation=0
+    )
 
-    ax.set_yticks(np.arange(label.num_labels), )
-    ax.set_yticklabels(label.ids, fontsize=label_fontsize,
-                       fontweight="bold")
+    ax.set_yticks(
+        np.arange(label.num_labels),
+    )
+    ax.set_yticklabels(label.ids, fontsize=label_fontsize, fontweight="bold")
 
     for ticklabels in [ax.get_xticklabels(), ax.get_yticklabels()]:
         for n, id in enumerate(label.ids):
@@ -631,11 +651,9 @@ if __name__ == "__main__":
     labels_list = [labels_1, labels_2, matched_labels_2, expanded]
     for name, label in zip(names, labels_list):
         print(f"\n {name}\n" + "-" * 50)
-        print(label, "\n", label.dense,
-              f"\nonehot:\n{label.get_onehot().toarray()}\n")
+        print(label, "\n", label.dense, f"\nonehot:\n{label.get_onehot().toarray()}\n")
 
-    print(f"\nOne-hot normalized:\n"
-          f"{labels_2.get_normalized_onehot().toarray()}")
+    print(f"\nOne-hot normalized:\n{labels_2.get_normalized_onehot().toarray()}")
 
     weights_matrix = csr_matrix(np.random.random_sample((11, 11)))
     # print(weights_matrix)
@@ -648,8 +666,6 @@ if __name__ == "__main__":
 
     fig, ax = plt.subplots()
 
-    plot_connections(expanded, weights_matrix,
-                     ax,
-                     zero_self_connections=False)
+    plot_connections(expanded, weights_matrix, ax, zero_self_connections=False)
 
     plt.show()

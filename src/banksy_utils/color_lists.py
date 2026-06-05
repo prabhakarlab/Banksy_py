@@ -1,6 +1,6 @@
-'''
+"""
 Lists of colours for plotting
-'''
+"""
 
 # colour list used by SpaGCN
 # pastel-like
@@ -53,7 +53,7 @@ zeileis_28 = [
     "#f3e1eb",
     "#f6c4e1",
     "#f79cd4",
-    '#7f7f7f',
+    "#7f7f7f",
     "#c7c7c7",
     "#1CE6FF",
     "#336600",

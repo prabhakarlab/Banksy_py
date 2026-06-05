@@ -1,5 +1,5 @@
 """
-Function to compute noise-equivalent singular value 
+Function to compute noise-equivalent singular value
 for selection of number of PCs, as described in (Moffit et. al. 2018)
 
 Also, functions to plot variance contributions and singular values
@@ -19,11 +19,12 @@ from matplotlib.patches import Rectangle
 
 
 @timer
-def noise_equiv_singular_value(data: np.ndarray,
-                               num_permutations: int = 50,
-                               average_type: str = "mean",
-                               verbose: bool = True,
-                               ) -> Tuple[float, np.ndarray]:
+def noise_equiv_singular_value(
+    data: np.ndarray,
+    num_permutations: int = 50,
+    average_type: str = "mean",
+    verbose: bool = True,
+) -> Tuple[float, np.ndarray]:
     """
     get the noise-equivalent maximum singular value of a data matrix
     Each column will be seperately randomly permuted and singular values computed
@@ -41,7 +42,6 @@ def noise_equiv_singular_value(data: np.ndarray,
     all_singular_values = np.zeros((num_permutations,))
 
     for n in range(num_permutations):
-
         temp = data.copy()
 
         # permute each row seperately
@@ -51,8 +51,7 @@ def noise_equiv_singular_value(data: np.ndarray,
         all_singular_values[n] = PCA(n_components=1).fit(temp).singular_values_[0]
 
     if verbose:
-        print(f"List of all permuted top "
-              f"singular values:\n{all_singular_values}\n")
+        print(f"List of all permuted top singular values:\n{all_singular_values}\n")
 
     # Average the singular values
     # ---------------------------
@@ -64,17 +63,16 @@ def noise_equiv_singular_value(data: np.ndarray,
         return np.median(all_singular_values), all_singular_values
 
     else:
-        raise ValueError(
-            "Average type not recognised. Should be 'mean' or 'median'."
-        )
+        raise ValueError("Average type not recognised. Should be 'mean' or 'median'.")
 
 
-def plot_singular_values(pca: PCA,
-                         noise_highest_sv: Union[float, np.ndarray] = None,
-                         title: str = None,
-                         figsize: Tuple[int, int] = (6, 3),
-                         ax=None,
-                         ) -> None:
+def plot_singular_values(
+    pca: PCA,
+    noise_highest_sv: Union[float, np.ndarray] = None,
+    title: str = None,
+    figsize: Tuple[int, int] = (6, 3),
+    ax=None,
+) -> None:
     """
     Plot variance contribution for each component (elbow plot)
     :param pca: PCA object from scikit-learn (Must already be fit to data)
@@ -88,27 +86,29 @@ def plot_singular_values(pca: PCA,
     num_pcs = len(singular_values)
     pcs = np.arange(1, num_pcs + 1)
 
-    ax.plot(pcs, singular_values, color='royalblue', marker='o')
+    ax.plot(pcs, singular_values, color="royalblue", marker="o")
 
     if noise_highest_sv is not None:
-
         if isinstance(noise_highest_sv, float):
-
-            ax.hlines(y=noise_highest_sv,
-                      xmin=0, xmax=num_pcs + 1,
-                      linewidth=1, color='r')
+            ax.hlines(
+                y=noise_highest_sv, xmin=0, xmax=num_pcs + 1, linewidth=1, color="r"
+            )
 
         elif isinstance(noise_highest_sv, np.ndarray):
-
             mean_sv = np.mean(noise_highest_sv)
             std_sv = np.std(noise_highest_sv)
 
-            ax.hlines(y=mean_sv,
-                      xmin=0, xmax=num_pcs + 1,
-                      linewidth=std_sv * 2, color='r', alpha=0.2)
-            ax.hlines(y=mean_sv,
-                      xmin=0, xmax=num_pcs + 1,
-                      linewidth=0.2, color='firebrick')
+            ax.hlines(
+                y=mean_sv,
+                xmin=0,
+                xmax=num_pcs + 1,
+                linewidth=std_sv * 2,
+                color="r",
+                alpha=0.2,
+            )
+            ax.hlines(
+                y=mean_sv, xmin=0, xmax=num_pcs + 1, linewidth=0.2, color="firebrick"
+            )
 
     ax.set_xticks(pcs)
     ax.set_xticklabels(pcs)
@@ -118,11 +118,12 @@ def plot_singular_values(pca: PCA,
         ax.set_title(title)
 
 
-def plot_remaining_variance(pca: PCA,
-                            title: str = None,
-                            figsize: Tuple[int, int] = (6, 3),
-                            ax=None,
-                            ) -> None:
+def plot_remaining_variance(
+    pca: PCA,
+    title: str = None,
+    figsize: Tuple[int, int] = (6, 3),
+    ax=None,
+) -> None:
     """
     Plot variance contribution for each component (elbow plot)
     :param pca: PCA object from scikit-learn (Must already be fit to data)
@@ -134,8 +135,7 @@ def plot_remaining_variance(pca: PCA,
 
     remaining_variance = 1 - np.cumsum(pca.explained_variance_ratio_)
     components = np.arange(1, len(remaining_variance) + 1)
-    ax.plot(components, remaining_variance,
-            color='forestgreen', marker='o')
+    ax.plot(components, remaining_variance, color="forestgreen", marker="o")
 
     ax.set_xticks(components)
     ax.set_xticklabels(components)

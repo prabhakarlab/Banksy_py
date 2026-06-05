@@ -5,7 +5,8 @@
 
 
 import warnings
-warnings.filterwarnings("ignore") 
+
+warnings.filterwarnings("ignore")
 import os, time
 import pandas as pd
 import numpy as np
@@ -19,7 +20,7 @@ from banksy_utils.color_lists import spagcn_color
 
 start = time.perf_counter_ns()
 random_seed = 1234
-cluster_algorithm = 'leiden'
+cluster_algorithm = "leiden"
 np.random.seed(random_seed)
 random.seed(random_seed)
 
@@ -33,9 +34,9 @@ random.seed(random_seed)
 
 from banksy_utils.load_data import load_adata
 
-'''Main tunable variation in running the BANKSY algorithm'''
+"""Main tunable variation in running the BANKSY algorithm"""
 
-'''Input File'''
+"""Input File"""
 file_path = os.path.join("data", "starmap")
 adata_filename = "starmap_BY3_1k.h5ad"
 
@@ -44,24 +45,33 @@ locations_filename = ""
 
 load_adata_directly = True
 
-'''Saving output figures'''
+"""Saving output figures"""
 save_fig = False
 
-output_folder = os.path.join(os.getcwd(), 'data', 'starmap', 'tmp_png', f'{cluster_algorithm}', f'seed{random_seed}')
+output_folder = os.path.join(
+    os.getcwd(),
+    "data",
+    "starmap",
+    "tmp_png",
+    f"{cluster_algorithm}",
+    f"seed{random_seed}",
+)
 
 # Colour map
-c_map = 'tab20'
+c_map = "tab20"
 
-coord_keys = ('x', 'y', 'spatial')
+coord_keys = ("x", "y", "spatial")
 num_clusters = 7
-sample = 'starmap'
+sample = "starmap"
 
-raw_y, raw_x, adata = load_adata(file_path,
-                                 load_adata_directly,
-                                 adata_filename,
-                                 gcm_filename,
-                                 locations_filename,
-                                 coord_keys)
+raw_y, raw_x, adata = load_adata(
+    file_path,
+    load_adata_directly,
+    adata_filename,
+    gcm_filename,
+    locations_filename,
+    coord_keys,
+)
 
 adata.var_names_make_unique()
 
@@ -70,7 +80,7 @@ adata.var_names_make_unique()
 # 1. Define 'min_count' and 'max_count' for filtering genes by cell-count
 # 2. 'MT-filter' for filtering MT-genes
 # 3. 'n_top_genes' for selecting the top n HVGs or SVGs
-# 
+#
 # Note that: For STARmap, we skip this step as the data matrix loaded has already been preprocessed using the ipython script provided by the authors
 
 # ### Load Manual annotations from datafile
@@ -78,21 +88,27 @@ adata.var_names_make_unique()
 # In[3]:
 
 
-'''Load manual annotations'''
+"""Load manual annotations"""
 adata = adata[adata.obs["cluster_name"].notnull()]
 
-annotations =  pd.read_csv(os.path.join(file_path, "Starmap_BY3_1k_meta_annotated_18oct22.csv"))
+annotations = pd.read_csv(
+    os.path.join(file_path, "Starmap_BY3_1k_meta_annotated_18oct22.csv")
+)
 
-manual_labels =  "smoothed_manual" # Ground truth annotations in pd.DataFrame
-annotation_key = 'manual_annotations' # Key to access annotations in adata.obs[annotation_keys]
+manual_labels = "smoothed_manual"  # Ground truth annotations in pd.DataFrame
+annotation_key = (
+    "manual_annotations"  # Key to access annotations in adata.obs[annotation_keys]
+)
 
-print(annotations.loc[:,manual_labels ])
-adata.obs[annotation_key] = annotations.loc[:,manual_labels ].values
-adata.obs[annotation_key] = adata.obs[annotation_key].astype('category')
+print(annotations.loc[:, manual_labels])
+adata.obs[annotation_key] = annotations.loc[:, manual_labels].values
+adata.obs[annotation_key] = adata.obs[annotation_key].astype("category")
 print(adata.obs[annotation_key])
 
 # Add spatial coordinates to '.obsm' attribute
-adata.obsm[coord_keys[2]] = pd.concat([adata.obs[coord_keys[0]], adata.obs[coord_keys[1]]], axis=1).to_numpy()
+adata.obsm[coord_keys[2]] = pd.concat(
+    [adata.obs[coord_keys[0]], adata.obs[coord_keys[1]]], axis=1
+).to_numpy()
 
 
 # # Specifying parameters for BANKSY
@@ -100,17 +116,17 @@ adata.obsm[coord_keys[2]] = pd.concat([adata.obs[coord_keys[0]], adata.obs[coord
 # In[4]:
 
 
-resolutions = [0.8] # clustering resolution for Leiden clustering
+resolutions = [0.8]  # clustering resolution for Leiden clustering
 
-pca_dims = [20] # number of dimensions to keep after PCA
+pca_dims = [20]  # number of dimensions to keep after PCA
 
-lambda_list = [.8] # lambda
+lambda_list = [0.8]  # lambda
 
-k_geom = 15 #spatial neighbours
+k_geom = 15  # spatial neighbours
 
-max_m = 1 # use AGF
+max_m = 1  # use AGF
 
-nbr_weight_decay = "scaled_gaussian" # can also be "reciprocal", "uniform" or "ranked"
+nbr_weight_decay = "scaled_gaussian"  # can also be "reciprocal", "uniform" or "ranked"
 
 
 # # Initialize Banksy Object
@@ -141,18 +157,18 @@ results_df = run_banksy_multiparam(
     banksy_dict,
     lambda_list,
     resolutions,
-    color_list = spagcn_color,
-    max_m = max_m,
-    filepath = output_folder,
-    key = coord_keys,
-    pca_dims = pca_dims,
-    annotation_key = annotation_key,
-    max_labels = num_clusters,
-    cluster_algorithm = cluster_algorithm,
-    match_labels = False,
-    savefig = False,
-    add_nonspatial = False,
-    variance_balance = False,
+    color_list=spagcn_color,
+    max_m=max_m,
+    filepath=output_folder,
+    key=coord_keys,
+    pca_dims=pca_dims,
+    annotation_key=annotation_key,
+    max_labels=num_clusters,
+    cluster_algorithm=cluster_algorithm,
+    match_labels=False,
+    savefig=False,
+    add_nonspatial=False,
+    variance_balance=False,
 )
 
 
@@ -167,39 +183,41 @@ results_df
 
 from banksy_utils.refine_clusters import refine_clusters
 
-results_df = refine_clusters(adata,
-                             results_df,
-                             coord_keys=coord_keys,
-                             color_list=spagcn_color,
-                             savefig=True,
-                             output_folder=output_folder,
-                             refine_method='once',
-                             annotation_key=annotation_key,
-                             num_neigh=6)
+results_df = refine_clusters(
+    adata,
+    results_df,
+    coord_keys=coord_keys,
+    color_list=spagcn_color,
+    savefig=True,
+    output_folder=output_folder,
+    refine_method="once",
+    annotation_key=annotation_key,
+    num_neigh=6,
+)
 
 run_time = (time.perf_counter_ns() - start) * 1e-9
 print(f"BANKSY runtime = {round(run_time / 60, 3)} mins")
-results_df.to_csv(os.path.join(output_folder, 'results.csv'))
+results_df.to_csv(os.path.join(output_folder, "results.csv"))
 
 
 # #Modify banksy parameters
 
-# #Refined parameters 
+# #Refined parameters
 
 # In[9]:
 
 
-resolutions = [.9] # clustering resolution for Leiden clustering
+resolutions = [0.9]  # clustering resolution for Leiden clustering
 
-pca_dims = [20] # number of dimensions to keep after PCA
+pca_dims = [20]  # number of dimensions to keep after PCA
 
-lambda_list = [.8] # lambda
+lambda_list = [0.8]  # lambda
 
-k_geom = 8 #spatial neighbours
+k_geom = 8  # spatial neighbours
 
-max_m = 1 # use AGF
+max_m = 1  # use AGF
 
-nbr_weight_decay = "scaled_gaussian" # can also be "reciprocal", "uniform" or "ranked"
+nbr_weight_decay = "scaled_gaussian"  # can also be "reciprocal", "uniform" or "ranked"
 
 
 # In[10]:
@@ -226,18 +244,18 @@ results_df_modi = run_banksy_multiparam(
     banksy_dict_modi,
     lambda_list,
     resolutions,
-    color_list = spagcn_color,
-    max_m = max_m,
-    filepath = output_folder,
-    key = coord_keys,
-    pca_dims = pca_dims,
-    annotation_key = annotation_key,
-    max_labels = num_clusters,
-    cluster_algorithm = cluster_algorithm,
-    match_labels = False,
-    savefig = False,
-    add_nonspatial = False,
-    variance_balance = False,
+    color_list=spagcn_color,
+    max_m=max_m,
+    filepath=output_folder,
+    key=coord_keys,
+    pca_dims=pca_dims,
+    annotation_key=annotation_key,
+    max_labels=num_clusters,
+    cluster_algorithm=cluster_algorithm,
+    match_labels=False,
+    savefig=False,
+    add_nonspatial=False,
+    variance_balance=False,
 )
 
 
@@ -250,23 +268,21 @@ results_df_modi
 # In[13]:
 
 
-results_df_modi = refine_clusters(adata,
-                             results_df_modi,
-                             coord_keys=coord_keys,
-                             color_list=spagcn_color,
-                             savefig=True,
-                             output_folder=output_folder,
-                             refine_method='once',
-                             annotation_key=annotation_key,
-                             num_neigh=6)
+results_df_modi = refine_clusters(
+    adata,
+    results_df_modi,
+    coord_keys=coord_keys,
+    color_list=spagcn_color,
+    savefig=True,
+    output_folder=output_folder,
+    refine_method="once",
+    annotation_key=annotation_key,
+    num_neigh=6,
+)
 
 run_time = (time.perf_counter_ns() - start) * 1e-9
 print(f"BANKSY runtime = {round(run_time / 60, 3)} mins")
-results_df.to_csv(os.path.join(output_folder, 'results.csv'))
+results_df.to_csv(os.path.join(output_folder, "results.csv"))
 
 
 # In[ ]:
-
-
-
-
