@@ -47,6 +47,8 @@ def generate_banksy_matrix(
 
     for nbr_weight_decay in banksy_dict:
         # First create neighbour matrices
+        # !ILGWG -- BUG FLAG
+        # The positions of these parameters are wrong
         nbr_matrices = create_nbr_matrix(
             adata, banksy_dict, nbr_weight_decay, max_m, variance_balance
         )

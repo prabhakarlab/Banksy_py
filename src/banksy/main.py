@@ -7,33 +7,31 @@ updated 4 mar 2022
 updated 8 Sep 2022
 """
 
-import numpy as np
-import pandas as pd
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-from typing import Union, Tuple, List
-
-import scipy.sparse as sparse
-from scipy.sparse import csr_matrix, issparse
-from sklearn.neighbors import NearestNeighbors
+from typing import List, Tuple, Union
 
 import anndata
-
 import igraph
 
 # print(f"Using igraph version {igraph.__version__}")
 import leidenalg
-# print(f"Using leidenalg version {leidenalg.__version__}\n")
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import scipy.sparse as sparse
+import seaborn as sns
+from scipy.sparse import csr_matrix, issparse
+from sklearn.neighbors import NearestNeighbors
 
-from banksy_utils.time_utils import timer
 from banksy.csr_operations import (
+    filter_by_rank_and_threshold,
     remove_greater_than,
     row_normalize,
-    filter_by_rank_and_threshold,
 )
 from banksy.labels import Label
+
+# print(f"Using leidenalg version {leidenalg.__version__}\n")
+from banksy_utils.time_utils import timer
 
 
 def gaussian_weight_1d(distance: float, sigma: float):
@@ -131,6 +129,13 @@ def theta_from_spatial_graph(
 
     returns CSR matrix with theta (azimuthal angles) as .data
     """
+
+    # !ILGWG -- BUG FIX
+    # Cast to a signed float dtype before differencing coordinates. Some inputs
+    # (e.g. obsm["spatial"] stored as uint) would otherwise underflow on
+    # ``nbr_coord - self_coord`` for negative offsets, collapsing every angle
+    # into [0, pi/2] and corrupting the azimuthal Gabor filter.
+    locations = np.asarray(locations, dtype=np.float64)
 
     theta_data = np.zeros_like(spatial_graph.data, dtype=np.float32)
 
