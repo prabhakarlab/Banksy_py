@@ -4,20 +4,22 @@ Create BANKSY Matrix from annadata
 Yifei May 2023
 """
 
-import os, time, gc
-import numpy as np
-import matplotlib.pyplot as plt
+import gc
+import os
+import time
+from copy import deepcopy
+from datetime import datetime
+from typing import Tuple
 
+import anndata
+import matplotlib.pyplot as plt
+import numpy as np
 import scipy as sp
 import scipy.sparse as sparse
 from scipy.sparse import csr_matrix, issparse
-
-import anndata
-from copy import deepcopy
-from datetime import datetime
-from banksy.main import concatenate_all
 from sklearn.decomposition import PCA
-from typing import Tuple
+
+from banksy.main import concatenate_all
 
 
 def generate_banksy_matrix(
@@ -30,7 +32,7 @@ def generate_banksy_matrix(
     save_folder: str = "./data",
     variance_balance: bool = False,
     verbose: bool = True,
-) -> Tuple[dict, np.ndarray]:
+) -> Tuple[dict, anndata.AnnData]:
     """Creates the banksy matrices with the set hyperparameters given.
     Stores the computed banksy matrices in the banksy_dict object
     Returns the *last* banksy matrix that was computed."""
