@@ -50,7 +50,12 @@ def generate_banksy_matrix(
         # !ILGWG -- BUG FLAG
         # The positions of these parameters are wrong
         nbr_matrices = create_nbr_matrix(
-            adata, banksy_dict, nbr_weight_decay, max_m, variance_balance
+            adata,
+            banksy_dict,
+            nbr_weight_decay,
+            max_m,
+            center=False,
+            variance_balance=variance_balance,
         )
 
         # Create matrix list
