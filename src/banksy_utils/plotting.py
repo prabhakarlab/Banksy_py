@@ -140,8 +140,9 @@ def plot_graph_weights(locations,
             if theta_graph is not None:
                 theta.append(theta_graph.data[ptr])
 
-    print(f"Maximum weight: {np.amax(np.array(weights))}\n")
-    weights /= np.amax(np.array(weights))
+    weights = np.array(weights).real
+    print(f"Maximum weight: {np.amax(weights)}\n")
+    weights /= np.amax(weights)
 
     if theta_graph is not None:
         norm = mpl.colors.Normalize(vmin=min(theta), vmax=max(theta), clip=True)
