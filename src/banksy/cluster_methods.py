@@ -80,11 +80,11 @@ def run_mclust_partition(
             print(f"Decay type: {nbr_weight_decay}")
 
             for lambda_param in banksy_dict[nbr_weight_decay]:
-                if not isinstance(lambda_param, float):
-                    continue # skip other dictionary keys except lambda parameters
+                if isinstance(lambda_param, str):
+                    continue # skip string keys like "weights", "norm_counts_concatenated"
 
                 print(f"Neighbourhood Contribution (Lambda Parameter): {lambda_param}")
-            
+
                 adata_temp = banksy_dict[nbr_weight_decay][lambda_param]["adata"]
 
                 pca_dims = get_pca_dims(adata_temp)
@@ -94,12 +94,12 @@ def run_mclust_partition(
 
                     if isinstance(pca_dim, str):
                         continue # skip full concatenated matrices
-                    
-                    print("\n" + "=" * 100 + 
+
+                    print("\n" + "=" * 100 +
                         f"\nSetting up partitioner for (nbr decay = {nbr_weight_decay}), "
                         f"Neighbourhood contribution = {lambda_param}, "
                         f"PCA dimensions = {pca_dim})\n" + "=" * 100 + "\n")
-                    
+
                     used_obsm = f"reduced_pc_{pca_dim}"
 
                     print(f"\nFitting M-cluster algorithm with {num_labels} label\n" + "-" * 30 + "\n")
@@ -242,11 +242,11 @@ def run_Leiden_partition(
         print(f"Decay type: {nbr_weight_decay}")
 
         for lambda_param in banksy_dict[nbr_weight_decay]:
-            if not isinstance(lambda_param, float):
-                continue # skip other dictionary keys except lambda parameters
+            if isinstance(lambda_param, str):
+                continue # skip string keys like "weights", "norm_counts_concatenated"
 
             print(f"Neighbourhood Contribution (Lambda Parameter): {lambda_param}")
-        
+
             adata_temp = banksy_dict[nbr_weight_decay][lambda_param]["adata"]
 
             pca_dims = get_pca_dims(adata_temp)
