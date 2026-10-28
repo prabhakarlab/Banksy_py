@@ -17,9 +17,9 @@ def run_banksy_multiparam(adata: anndata.AnnData,
                           lambda_list: List[int],
                           resolutions: List[int],
                           color_list: Union[List, str],
-                          max_m: int,
                           filepath: str,
                           key: Tuple[str],
+                          max_m: int = None,
                           match_labels: bool = False,
                           pca_dims: List[int] = [20, ],
                           savefig: bool = True,
@@ -30,6 +30,12 @@ def run_banksy_multiparam(adata: anndata.AnnData,
                           partition_seed: int = 1234,
                           add_nonspatial: bool = True,
                           **kwargs):
+    '''Runs dimensionality reduction and clustering over the given hyperparameters.
+
+    max_m sets the maximum order of the azimuthal gabor filter (AGF). If left as
+    None (the default), it is inferred from the spatial graphs built by
+    initialize_banksy, so AGF is used only if the graph was built with it
+    (max_m = 1). Pass an explicit integer to override.'''
     options = {
         'save_all_h5ad': True,
         'save_name': 'slideseq_mousecerebellum_',

@@ -4,7 +4,7 @@
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/prabhakarlab/Banksy_py/graphs/commit-activity)
 
 
-# <b> BANKSY:  Spatial Clustering Algorithm that Unifies Cell-Typing and Tissue Domain Segmentation (v1.3.4) </b>
+# <b> BANKSY:  Spatial Clustering Algorithm that Unifies Cell-Typing and Tissue Domain Segmentation (v1.3.6) </b>
 
 ### *Vipul Singhal\*, Nigel Chou\*, Joseph Lee, Yifei Yue, Jinyue Liu, Wan Kee Chock, Li Lin, YunChing Chang, Erica Teo, Hwee Kuan Lee, Kok Hao Chen<sup>#</sup> and Shyam Prabhakar<sup>#</sup>* <br>
 
@@ -24,6 +24,11 @@ BANKSY is applicable to a wide variety of spatial technologies (e.g. 10x Visium,
 
 This Python version of BANKSY (compatible with `Scanpy`), we show how BANKSY can be used for task **1** (improving cell-type assignment) using Slide-seq and Slide-seq V2 mouse cerebellum datasets. 
 The R version of BANKSY is available here (https://github.com/prabhakarlab/Banksy).
+
+Changes for v1.3.6:
+- **AGF is now off by default.** `initialize_banksy` defaults to `max_m = 0` (neighbour mean only), matching the R version and keeping memory usage low on large datasets. Set `max_m = 1` to enable the azimuthal gabor filter (AGF).
+- `generate_banksy_matrix` and `run_banksy_multiparam` now infer `max_m` from the spatial graph built by `initialize_banksy` when it is not passed explicitly, so the BANKSY matrix can no longer be computed at a different order than the graph.
+- Example notebooks updated to use `max_m = 0`.
 
 Changes for v1.3.0:
 - Now pip-installable! Install with `pip install pybanksy`
@@ -130,6 +135,7 @@ conda install bioconda::harmony-pytorch
 import scanpy as sc
 from banksy.initialize_banksy import initialize_banksy
 from banksy.run_banksy import run_banksy_multiparam
+from banksy_utils.color_lists import spagcn_color
 
 # Load your spatial transcriptomics data
 adata = sc.read_h5ad("your_data.h5ad")
@@ -140,18 +146,28 @@ banksy_dict = initialize_banksy(
     adata,
     coord_keys=coord_keys,
     num_neighbours=15,
-    nbr_weight_decay='scaled_gaussian'
+    nbr_weight_decay='scaled_gaussian',
+    max_m=0,  # 0 = neighbour mean only (default); set 1 to also use the AGF
 )
 
 # Run BANKSY clustering
-
 results_df = run_banksy_multiparam(
     adata,
     banksy_dict,
     lambda_list=[0.2],
-    resolutions=[0.5, 1.0]
+    resolutions=[0.5, 1.0],
+    color_list=spagcn_color,
+    filepath="./banksy_results",
+    key=coord_keys,
+    # max_m is inferred from banksy_dict if omitted
 )
 ```
+
+> **Note on the AGF.** `max_m = 0` (the default) augments each cell with the mean
+> expression of its spatial neighbours only. `max_m = 1` additionally computes the
+> azimuthal gabor filter (AGF), which captures expression gradients but roughly
+> doubles the neighbourhood feature matrix and its memory footprint. We recommend
+> `max_m = 0` for large datasets. This matches the default in the R version.
 
 #### Example Notebooks
 
