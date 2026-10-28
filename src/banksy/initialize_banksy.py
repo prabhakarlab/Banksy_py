@@ -19,7 +19,7 @@ def initialize_banksy(adata: anndata.AnnData,
                       coord_keys: Tuple[str],
                       num_neighbours: int = 15,
                       nbr_weight_decay: str = 'scaled_gaussian',
-                      max_m: int = 1,
+                      max_m: int = 0,
                       plt_edge_hist: bool = True,
                       plt_nbr_weights: bool = True,
                       plt_agf_angles: bool = False,
@@ -35,7 +35,10 @@ def initialize_banksy(adata: anndata.AnnData,
 
         nbr_weight_decay (str): Type of neighbourhood decay function, can be 'scaled_gaussian' or 'reciprocal'
 
-        max_m (int): Maximum order of azimuthal gabor filter, we recommend a default of 1
+        max_m (int): Maximum order of azimuthal gabor filter (AGF). The default
+        of 0 uses only the neighbour mean expression (recommended, and consistent
+        with the R version). Set max_m = 1 to additionally compute the first-order
+        AGF, which captures expression gradients at the cost of higher memory usage.
 
     
     Optional Args:

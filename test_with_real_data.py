@@ -66,7 +66,7 @@ print("[PASS] Step 1: data loaded\n")
 
 # ── Step 2: Initialize BANKSY ───────────────────────────────────────────────
 print("=" * 60)
-print("Step 2: Initialize BANKSY (build spatial graph, compute AGF)")
+print("Step 2: Initialize BANKSY (build spatial graph)")
 print("=" * 60)
 
 from banksy.initialize_banksy import initialize_banksy
@@ -77,7 +77,7 @@ banksy_dict = initialize_banksy(
     coord_keys,
     num_neighbours=15,
     nbr_weight_decay="scaled_gaussian",
-    max_m=1,
+    max_m=0,
     plt_edge_hist=False,
     plt_nbr_weights=False,
     plt_agf_angles=False,
@@ -103,7 +103,7 @@ results_df = run_banksy_multiparam(
     lambda_list=[0.8],
     resolutions=[0.8],
     color_list=spagcn_color,
-    max_m=1,
+    max_m=0,
     filepath=os.path.join(PROJ, "data", "starmap", "tmp_test"),
     key=coord_keys,
     pca_dims=[20],

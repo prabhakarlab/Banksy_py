@@ -22,7 +22,7 @@ from typing import Tuple
 def generate_banksy_matrix(adata: anndata.AnnData,
                            banksy_dict: dict,
                            lambda_list: list,
-                           max_m: int,
+                           max_m: int = None,
                            plot_std: bool = False,
                            save_matrix: bool = False,
                            save_folder: str = './data',
@@ -30,7 +30,13 @@ def generate_banksy_matrix(adata: anndata.AnnData,
                            verbose: bool = True) -> Tuple[dict, np.ndarray]:
     '''Creates the banksy matrices with the set hyperparameters given.
     Stores the computed banksy matrices in the banksy_dict object
-    Returns the *last* banksy matrix that was computed.'''
+    Returns the *last* banksy matrix that was computed.
+
+    max_m sets the maximum order of the azimuthal gabor filter (AGF). If left as
+    None, it is inferred from the spatial graphs already built by
+    initialize_banksy (i.e. the highest order present in banksy_dict), so that
+    the matrix is always consistent with the graph. Pass an explicit integer only
+    to override that (it must not exceed the order the graph was built with).'''
 
     # Print time of ran
     time_str = datetime.now().strftime("%b-%d-%Y-%H-%M")
@@ -42,11 +48,17 @@ def generate_banksy_matrix(adata: anndata.AnnData,
 
     for nbr_weight_decay in banksy_dict:
 
+        # Infer max_m from the spatial graphs built by initialize_banksy, unless
+        # the caller passed an explicit value. The weights dict is keyed by order
+        # m = 0 .. max_m, so the highest key is the order the graph supports.
+        weights = banksy_dict[nbr_weight_decay]["weights"]
+        effective_max_m = max_m if max_m is not None else max(weights.keys())
+
         # First create neighbour matrices
-        nbr_matrices = create_nbr_matrix(adata, banksy_dict, nbr_weight_decay, max_m, variance_balance=variance_balance)
+        nbr_matrices = create_nbr_matrix(adata, banksy_dict, nbr_weight_decay, effective_max_m, variance_balance=variance_balance)
 
         # Create matrix list
-        mat_list, concatenated = create_mat_list(adata, nbr_matrices, max_m)
+        mat_list, concatenated = create_mat_list(adata, nbr_matrices, effective_max_m)
 
         # save un-nomalized (i.e. no lambda factor) version of BANKSY matrix
         banksy_dict[nbr_weight_decay]["norm_counts_concatenated"] = concatenated
